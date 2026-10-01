@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>漏洞赏金 / 众测平台清单 — 官网 · 注册入口 · 所需材料</title>
+<style>
+  :root{
+    --bg:#F5F6F4;
+    --card:#FFFFFF;
+    --ink:#1F2321;
+    --ink2:#5A605C;
+    --ink3:#8A908C;
+    --line:#E3E5E0;
+    --line2:#D2D5CE;
+    --blue:#185FA5;   --blue-bg:#E6F1FB;   --blue-tx:#0C447C;
+    --teal:#0F6E56;   --teal-bg:#E1F5EE;   --teal-tx:#085041;
+    --amber:#854F0B;  --amber-bg:#FAEEDA;  --amber-tx:#633806;
+    --red:#A32D2D;    --red-bg:#FCEBEB;    --red-tx:#791F1F;
+    --purple:#534AB7; --purple-bg:#EEEDFE; --purple-tx:#3C3489;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
+    font-size:15px; line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1040px; margin:0 auto; padding:48px 28px 80px}
+
+  header.top{margin-bottom:28px}
+  .kicker{font-size:12.5px; letter-spacing:.08em; color:var(--ink3); text-transform:uppercase; margin-bottom:10px}
+  h1{font-size:29px; font-weight:600; margin:0 0 12px; letter-spacing:-.01em; line-height:1.3}
+  .sub{color:var(--ink2); font-size:14.5px; margin:0}
+  .meta{margin-top:14px; font-size:13px; color:var(--ink3)}
+
+  .notice{
+    margin:26px 0 38px; padding:16px 20px; border-radius:12px;
+    background:var(--red-bg); border:1px solid #F0BEBE; color:var(--red-tx); font-size:13.5px;
+  }
+  .notice strong{font-weight:600}
+
+  h2{
+    font-size:19px; font-weight:600; margin:44px 0 6px; letter-spacing:-.005em;
+    display:flex; align-items:center; gap:10px;
+  }
+  h2 .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  h2 .tag{font-size:12px;font-weight:500;color:var(--ink3);margin-left:auto;letter-spacing:0}
+  .lead{color:var(--ink2); font-size:14px; margin:0 0 18px}
+
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:18px 20px 16px; display:flex; flex-direction:column; gap:10px;
+  }
+  .card.wide{grid-column:1 / -1}
+  .card-h{display:flex; align-items:baseline; gap:9px; flex-wrap:wrap}
+  .card-h .name{font-size:16px; font-weight:600}
+  .card-h .org{font-size:12.5px; color:var(--ink3)}
+  .pill{
+    font-size:11.5px; padding:2px 9px; border-radius:999px; font-weight:500;
+    border:1px solid transparent; white-space:nowrap;
+  }
+  .p-blue{background:var(--blue-bg); color:var(--blue-tx); border-color:#B5D4F4}
+  .p-teal{background:var(--teal-bg); color:var(--teal-tx); border-color:#9FE1CB}
+  .p-amber{background:var(--amber-bg); color:var(--amber-tx); border-color:#FAC775}
+  .p-purple{background:var(--purple-bg); color:var(--purple-tx); border-color:#CECBF6}
+  .p-gray{background:#F1EFE8; color:#444441; border-color:#D3D1C7}
+
+  .rows{display:flex; flex-direction:column; gap:7px; font-size:13.5px}
+  .row{display:flex; gap:9px; align-items:flex-start}
+  .row .k{color:var(--ink3); flex:none; width:58px; font-size:13px; padding-top:1px}
+  .row .v{color:var(--ink2); flex:1; min-width:0}
+  .row .v b{color:var(--ink); font-weight:600}
+  a{color:var(--blue); text-decoration:none; border-bottom:1px solid #B5D4F4; word-break:break-all}
+  a:hover{color:var(--blue-tx); border-bottom-color:var(--blue)}
+  code{
+    font-family:ui-monospace,Consolas,"Courier New",monospace; font-size:12.5px;
+    background:#F1EFE8; padding:1px 5px; border-radius:4px; color:#444441;
+  }
+
+  table{width:100%; border-collapse:collapse; margin-top:14px; font-size:13.5px; background:var(--card);
+    border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  th{background:#F1EFE8; text-align:left; font-weight:600; font-size:13px; padding:11px 14px; color:var(--ink)}
+  td{padding:11px 14px; border-top:1px solid var(--line); color:var(--ink2); vertical-align:top}
+  td b{color:var(--ink); font-weight:600}
+  td:first-child{color:var(--ink); font-weight:500; white-space:nowrap}
+
+  ul.tight{margin:6px 0 0; padding-left:20px; color:var(--ink2); font-size:13.5px}
+  ul.tight li{margin-bottom:5px}
+  ul.tight li b{color:var(--ink); font-weight:600}
+
+  .redline{background:var(--card); border:1px solid #F0BEBE; border-left:3px solid var(--red);
+    border-radius:12px; padding:18px 22px; margin-top:16px}
+  .redline ol{margin:0; padding-left:20px; font-size:13.5px; color:var(--ink2)}
+  .redline ol li{margin-bottom:8px}
+  .redline ol li b{color:var(--red-tx); font-weight:600}
+
+  footer{margin-top:52px; padding-top:20px; border-top:1px solid var(--line);
+    font-size:12.5px; color:var(--ink3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker">Bug Bounty &amp; SRC</div>
+  <h1>漏洞赏金 / 众测平台清单</h1>
+  <p class="sub">官网地址 · 注册入口 · 注册所需材料，按上手难度从易到难排列。</p>
+  <div class="meta">整理时间：2026-10-01 &nbsp;·&nbsp; 信息来自各平台官网、帮助中心与公开说明</div>
+</header>
+
+<div class="notice">
+  <strong>先读这条：</strong>下面所有平台都只允许你在<strong>平台明确列出的授权范围（scope）内</strong>做测试。
+  没有授权就去扫、去测任何网站（包括"随便找个公司官网"），在法律上属于非法侵入计算机信息系统，要负刑事责任。
+  平台授权是你唯一的合法身份来源。
+</div>
+
+<h2><span class="dot" style="background:#378ADD"></span>一、第三方众测平台<span class="tag">新手首选</span></h2>
+<p class="lead">中小厂商项目多、有新手专区、审核相对友好，适合用来跑通"挖到 → 通过 → 拿到钱"的第一次完整闭环。</p>
+
+<div class="grid">
+
+  <div class="card">
+    <div class="card-h">
+      <span class="name">补天漏洞响应平台</span>
+      <span class="org">奇安信</span>
+      <span class="pill p-blue">零基础首选</span>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="k">官网</span><span class="v"><a href="https://www.butian.net" target="_blank" rel="noopener">https://www.butian.net</a></span></div>
+      <div class="row"><span class="k">注册入口</span><span class="v">官网首页右上角「注册」，手机号或邮箱均可</span></div>
+      <div class="row"><span class="k">所需材料</span><span class="v">手机号／邮箱 + 验证码激活；<b>真实姓名、个人邮箱、手机号、住址、银行账号</b>；完成<b>实名认证</b></span></div>
+      <div class="row"><span class="k">提现</span><span class="v">需实名 + 收款账户，通常绑定支付宝</span></div>
+      <div class="row"><span class="k">注意</span><span class="v">平台不向白帽收费；展示奖金为<b>税后</b>金额；新号未产出有效漏洞前，最多待审核 5 个漏洞</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <span class="name">漏洞盒子 VULBOX</span>
+      <span class="org">上海斗象信息科技</span>
+      <span class="pill p-blue">项目规范</span>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="k">官网</span><span class="v"><a href="https://www.vulbox.com" target="_blank" rel="noopener">https://www.vulbox.com</a></span></div>
+      <div class="row"><span class="k">注册入口</span><span class="v">首页右上角「注册」，选择<b>白帽版</b></span></div>
+      <div class="row"><span class="k">所需材料</span><span class="v">手机号／邮箱、<b>身份证件信息、联系电话、地址、邮编</b>；完成实名身份认证后成为正式用户</span></div>
+      <div class="row"><span class="k">提现</span><span class="v">奖励由合作方云账户（天津）共享经济信息咨询有限公司发放</span></div>
+      <div class="row"><span class="k">注意</span><span class="v">注册协议要求具备完全民事行为能力；有「新手专区」可优先逛</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <span class="name">火线安全平台</span>
+      <span class="org">北京安全共识科技</span>
+      <span class="pill p-teal">项目优质</span>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="k">官网</span><span class="v"><a href="https://www.huoxian.cn" target="_blank" rel="noopener">https://www.huoxian.cn</a></span></div>
+      <div class="row"><span class="k">注册入口</span><span class="v">首页「注册（个人）」</span></div>
+      <div class="row"><span class="k">所需材料</span><span class="v"><b>全实名制注册</b>；部分私密／高级项目需要<b>邀请码</b></span></div>
+      <div class="row"><span class="k">拿邀请码</span><span class="v">可在火线 Zone 社区（<a href="http://zone.huoxian.cn" target="_blank" rel="noopener">zone.huoxian.cn</a>）投稿，稿件通过后发放邀请码</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <span class="name">漏洞银行 BUGBANK</span>
+      <span class="pill p-teal">汽车 / IoT 多</span>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="k">官网</span><span class="v"><a href="https://www.bugbank.cn" target="_blank" rel="noopener">https://www.bugbank.cn</a></span></div>
+      <div class="row"><span class="k">注册入口</span><span class="v">官网注册，<b>需完成实名认证</b>才能提交报告（各企业 SRC 页面均有「提交报告」入口）</span></div>
+      <div class="row"><span class="k">所需材料</span><span class="v">手机号／邮箱 + 实名身份认证信息</span></div>
+      <div class="row"><span class="k">机制</span><span class="v">漏洞分技术评级 A0–A9 与危害评级 P0–P6；另有<b>信誉分</b>（初始 350，每周更新）</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <span class="name">Sobug 白帽众测</span>
+      <span class="org">深圳</span>
+      <span class="pill p-amber">练手友好</span>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="k">官网</span><span class="v"><a href="https://www.sobug.com" target="_blank" rel="noopener">https://www.sobug.com</a></span></div>
+      <div class="row"><span class="k">特点</span><span class="v">小厂项目较多、问题相对明显、通过门槛低，适合纯新手刷经验</span></div>
+      <div class="row"><span class="k">建议</span><span class="v">平台规模较小，注册前先确认站点是否正常运营</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <span class="name">其他可关注的众测</span>
+      <span class="pill p-gray">补充</span>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="k">360 系</span><span class="v">360 众测 <a href="https://zhongce.360.cn" target="_blank" rel="noopener">zhongce.360.cn</a> ｜ 360 漏洞众包 <a href="https://src.360.net" target="_blank" rel="noopener">src.360.net</a></span></div>
+      <div class="row"><span class="k">厂商系</span><span class="v">雷神众测（安恒）<a href="https://www.bountyteam.com" target="_blank" rel="noopener">bountyteam.com</a> ｜ 云众可信（启明星辰）<a href="https://www.cloudcrowd.com.cn" target="_blank" rel="noopener">cloudcrowd.com.cn</a></span></div>
+      <div class="row"><span class="k">垂直领域</span><span class="v">看雪众测（IoT）<a href="https://ce.kanxue.com" target="_blank" rel="noopener">ce.kanxue.com</a> ｜ 慢雾（区块链）<a href="https://slowmist.io/bug-bounty.html" target="_blank" rel="noopener">slowmist.io</a></span></div>
+      <div class="row"><span class="k">CNVD系</span><span class="v">CNVD 众测平台 <a href="https://zc.cnvd.org.cn" target="_blank" rel="noopener">zc.cnvd.org.cn</a></span></div>
+    </div>
+  </div>
+
+</div>
+
+<h2><span class="dot" style="background:#1D9E75"></span>二、官方 / 公益 / 教育类<span class="tag">赚证书与资历</span></h2>
+<p class="lead">现金奖励偏少甚至没有，但发的是国家或行业认可的证书，对求职简历的帮助比几百块赏金大得多。</p>
+
+<div class="grid">
+
+  <div class="card">
+    <div class="card-h"><span class="name">CNVD 国家信息安全漏洞共享平台</span><span class="pill p-purple">发证书</span></div>
+    <div class="rows">
+      <div class="row"><span class="k">官网</span><span class="v"><a href="https://www.cnvd.org.cn" target="_blank" rel="noopener">https://www.cnvd.org.cn</a></span></div>
+      <div class="row"><span class="k">注册入口</span><span class="v"><a href="https://www.cnvd.org.cn/user/regist" target="_blank" rel="noopener">https://www.cnvd.org.cn/user/regist</a>（邮箱注册并激活，之后等待审核）</span></div>
+      <div class="row"><span class="k">所需材料</span><span class="v">邮箱 + 个人信息；<b>工作单位留空则默认显示"个人"</b>，会体现在漏洞证明上，注册后先去「账号设置」确认</span></div>
+      <div class="row"><span class="k">提交材料</span><span class="v">Word 报告 + POC/EXP + 待测程序 + 复现录屏，打包压缩上传</span></div>
+      <div class="row"><span class="k">证书门槛</span><span class="v">通用型：中危及以上（CVSS2.0 基准分 &gt; 4.0）且厂商注册资金 ≥ 5000 万或属党政机关/重要行业单位，还需<b>至少 10 起</b>互联网受影响案例；事件型：限三大运营商中高危，或党政机关、重要行业单位的高危</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><span class="name">CNNVD 国家信息安全漏洞库</span><span class="org">中国信息安全测评中心</span></div>
+    <div class="rows">
+      <div class="row"><span class="k">官网</span><span class="v"><a href="https://www.cnnvd.org.cn" target="_blank" rel="noopener">https://www.cnnvd.org.cn</a></span></div>
+      <div class="row"><span class="k">官方邮箱</span><span class="v"><code>cnnvd@itsec.gov.cn</code></span></div>
+      <div class="row"><span class="k">定位</span><span class="v">更偏向<b>机构合作</b>：技术支撑单位计划、厂商合作计划、漏洞通报报送，需要以单位身份签约合作</span></div>
+      <div class="row"><span class="k">适合</span><span class="v">安全厂商、软硬件厂商、互联网公司；个人开发者价值有限</span></div>
+    </div>
+  </div>
+
+  <div class="card wide">
+    <div class="card-h"><span class="name">EduSRC 教育行业漏洞报告平台</span><span class="org">上海交通大学</span><span class="pill p-purple">高校漏洞</span></div>
+    <div class="rows">
+      <div class="row"><span class="k">官网</span><span class="v"><a href="https://src.sjtu.edu.cn" target="_blank" rel="noopener">https://src.sjtu.edu.cn</a></span></div>
+      <div class="row"><span class="k">注册门槛</span><span class="v">比较特殊：<b>需要邀请码，或者先提交一个有效漏洞</b>才能注册。很多在校生就是靠先挖到一个洞"换"到账号的</span></div>
+      <div class="row"><span class="k">特点</span><span class="v">审核反馈快（通常 24 小时内）、积分可兑换实物奖品；但因为是真实高校资产，<b>测试尺度要求极严</b>——不得使用自动化扫描器、不测登录类功能、不触碰个人信息模块、发现即止</span></div>
+    </div>
+  </div>
+
+</div>
+
+<h2><span class="dot" style="background:#7F77DD"></span>三、大厂官方 SRC<span class="tag">有经验后再来</span></h2>
+<p class="lead">奖金高、资产多，但同一批资产上有成千上万人同时在看，重复率极高。建议先在小平台练到能稳定出洞再进来。</p>
+
+<table>
+  <thead>
+    <tr><th>平台</th><th>官网 / 注册入口</th><th>注册所需材料</th><th>备注</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>腾讯 TSRC</td>
+      <td><a href="https://security.tencent.com" target="_blank" rel="noopener">security.tencent.com</a><br>提交页：<a href="https://security.tencent.com/report/add" target="_blank" rel="noopener">/report/add</a></td>
+      <td>注册账号并登录（支持第三方账号登录）；提交报告需填完整请求地址、关键参数、测试账号、复现步骤截图</td>
+      <td>已<b>暂停接收第三方通用软件漏洞</b>；设「高质量报告奖」，单份优质报告最高 5000 元</td>
+    </tr>
+    <tr>
+      <td>阿里 ASRC / 阿里云先知</td>
+      <td><a href="https://xianzhi.aliyun.com" target="_blank" rel="noopener">xianzhi.aliyun.com</a><br>新版控制台：<a href="https://xianzhi-next.aliyun.com" target="_blank" rel="noopener">xianzhi-next.aliyun.com</a></td>
+      <td><b>先注册阿里云账号 + 完成个人实名认证</b>，再完善先知平台个人资料与<b>收款信息</b></td>
+      <td>收款姓名须与支付宝账号一致，否则影响打款；任务需报名并签署保密协议；确认漏洞后 24 小时内定级，3 个月内发放奖金</td>
+    </tr>
+    <tr>
+      <td>字节 ByteSRC</td>
+      <td><a href="https://src.bytedance.com" target="_blank" rel="noopener">src.bytedance.com</a></td>
+      <td>手机号验证码注册；实名认证含两部分：<b>三要素验证（真实姓名 + 身份证号 + 银行卡号）</b> 与 <b>抖音 App 扫脸人脸识别</b></td>
+      <td>人脸信息需每 6 个月更新一次；提现需绑定手机号；审核时效通常 7 个工作日内</td>
+    </tr>
+    <tr>
+      <td>百度 BSRC</td>
+      <td><a href="https://bsrc.baidu.com" target="_blank" rel="noopener">bsrc.baidu.com</a></td>
+      <td>百度账号 + 实名认证 + 收款信息</td>
+      <td>与腾讯、阿里同属国内第一梯队，重复率高</td>
+    </tr>
+    <tr>
+      <td>更多企业 SRC</td>
+      <td colspan="3" style="color:#5A605C">美团、京东、滴滴、快手、蚂蚁等均有自有 SRC；<br>
+        爱奇艺 <a href="https://security.iqiyi.com" target="_blank" rel="noopener">security.iqiyi.com</a> ｜ 哔哩哔哩 <a href="https://security.bilibili.com" target="_blank" rel="noopener">security.bilibili.com</a> ｜ BOSS 直聘 <a href="https://src.zhipin.com" target="_blank" rel="noopener">src.zhipin.com</a> ｜ 贝壳 <a href="https://security.ke.com" target="_blank" rel="noopener">security.ke.com</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2><span class="dot" style="background:#BA7517"></span>四、国际平台<span class="tag">赏金更高，提现链路长</span></h2>
+<p class="lead">海外大厂（Meta、Google、Apple 等）多数把漏洞赏金托管在这类平台上发放。</p>
+
+<div class="grid">
+
+  <div class="card">
+    <div class="card-h"><span class="name">HackerOne</span><span class="pill p-amber">全球最大</span></div>
+    <div class="rows">
+      <div class="row"><span class="k">官网</span><span class="v"><a href="https://hackerone.com" target="_blank" rel="noopener">https://hackerone.com</a></span></div>
+      <div class="row"><span class="k">注册</span><span class="v"><a href="https://hackerone.com/users/sign_up" target="_blank" rel="noopener">hackerone.com/users/sign_up</a></span></div>
+      <div class="row"><span class="k">注册材料</span><span class="v">邮箱即可，<b>允许使用化名</b>，不强制真实姓名；密码至少 12 位并通过强度校验</span></div>
+      <div class="row"><span class="k">收款三件套</span><span class="v">① 身份验证（Veriff，有效期 12 个月）② 至少一个支付方式 ③ <b>W-8BEN 税表</b>。缺任一项都拿不到钱</span></div>
+      <div class="row"><span class="k">收款方式</span><span class="v">PayPal（无最低额）／银行转账（$50，Priority $100）／加密货币（$15）；每月首尾两日不处理付款</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><span class="name">Bugcrowd</span><span class="pill p-amber">常见组合</span></div>
+    <div class="rows">
+      <div class="row"><span class="k">官网</span><span class="v"><a href="https://bugcrowd.com" target="_blank" rel="noopener">https://bugcrowd.com</a></span></div>
+      <div class="row"><span class="k">注册材料</span><span class="v">邮箱注册，<b>需开启双因子验证</b>（可用 Google Authenticator 等）</span></div>
+      <div class="row"><span class="k">收款</span><span class="v">银行卡转账 / PayPal / 比特币三选一；需填账户类型（个人或企业）</span></div>
+      <div class="row"><span class="k">坑点</span><span class="v"><b>W-8BEN 税表和个人信息必须用英文填写</b>，出现中文会导致打款一直卡在 upcoming payments</span></div>
+    </div>
+  </div>
+
+  <div class="card wide">
+    <div class="card-h"><span class="name">典型到账链路</span><span class="pill p-gray">实操提示</span></div>
+    <div class="rows">
+      <div class="row"><span class="k">国内</span><span class="v">平台账号 → 实名认证 → 绑定支付宝/银行卡 → 厂商确认漏洞 → 平台打款（补天在奖金确认后约 7 个工作日到账）</span></div>
+      <div class="row"><span class="k">海外</span><span class="v">厂商（如 Meta）→ Bugcrowd/HackerOne 领取 → <b>PayPal</b> → 结汇转入国内银行卡。可在汇率合适时结汇</span></div>
+      <div class="row"><span class="k">同类平台</span><span class="v">YesWeHack（<a href="https://www.yeswehack.com" target="_blank" rel="noopener">yeswehack.com</a>）、Intigriti（<a href="https://www.intigriti.com" target="_blank" rel="noopener">intigriti.com</a>）可作为补充，规则与上面类似</span></div>
+    </div>
+  </div>
+
+</div>
+
+<h2><span class="dot" style="background:#888780"></span>五、注册材料总清单</h2>
+<p class="lead">国内平台和海外平台要准备的东西差别挺大，对照下面这张表准备一次就够用。</p>
+
+<table>
+  <thead>
+    <tr><th>材料</th><th>是否必需</th><th>说明</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>中国大陆手机号</td><td><b>必需</b></td><td>接收验证码、绑定账号；ByteSRC 提现必须绑定手机号</td></tr>
+    <tr><td>常用邮箱</td><td><b>必需</b></td><td>注册激活、审核通知、后续申诉沟通</td></tr>
+    <tr><td>真实姓名 + 身份证号</td><td><b>必需</b>（国内）</td><td>实名认证核心项。<b>提现账户姓名必须与实名一致</b>，否则打款失败</td></tr>
+    <tr><td>人脸识别 / 扫脸</td><td>部分必需</td><td>如 ByteSRC 需用抖音 App 扫脸，且每 6 个月更新一次</td></tr>
+    <tr><td>银行卡号 / 支付宝账号</td><td>提现必需</td><td>先实名再绑收款；先知平台要求收款姓名与支付宝账号一致</td></tr>
+    <tr><td>居住地址、邮编</td><td>部分必需</td><td>补天注册资料明确要求填写住址；漏洞盒子协议中也涉及地址与邮编</td></tr>
+    <tr><td>邀请码</td><td>部分平台</td><td>火线安全部分项目需要；EduSRC 需邀请码<b>或</b>先提交一个有效漏洞</td></tr>
+    <tr><td>PayPal 账号</td><td>海外平台必需</td><td>HackerOne / Bugcrowd 收款主力方式，需提前完成 PayPal 实名</td></tr>
+    <tr><td>W-8BEN 税表</td><td>海外平台必需</td><td>非美国居民用；<b>必须全英文填写</b>，姓名地址都不要出现中文</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="dot" style="background:#E24B4A"></span>六、法律红线</h2>
+
+<div class="redline">
+  <ol>
+    <li><b>没有授权，一个包都不要发。</b>只在平台明示的 scope 内测试；范围外的域名、内网、支付接口一律不碰。私自扫描测试构成非法侵入计算机信息系统，负刑事责任。</li>
+    <li><b>不删改数据、不窃取信息。</b>SQL 注入只能取到证明漏洞存在所需的最小信息（库名/表名等）；不得留存用户数据到本地，测试完成要彻底删除。</li>
+    <li><b>不做破坏性测试。</b>不上传 webshell 滥用、不提权、不 DDoS/CC、不批量发包影响业务；支付、转账、改密类漏洞必须厂商明确授权并提前报备，且只用测试账号、小额验证。</li>
+    <li><b>不碰社工与物理接触。</b>不得对厂商员工做社会工程学攻击，不得测试需要物理接触设备/资产的漏洞。</li>
+    <li><b>漏洞修好之前不外传。</b>不得发到微信群、短视频平台；<b>更不得拿漏洞向企业索要钱财</b>——那是敲诈勒索，不是赏金。也不得一洞多投。</li>
+    <li><b>不用扫描器乱扫。</b>多数平台明确把"自动化扫描器发现的问题"列为无效漏洞，还可能触发风控封号。</li>
+  </ol>
+</div>
+
+<footer>
+  本文档仅整理各平台公开的官网入口与注册要求，不构成任何测试授权。平台规则、注册材料与赏金政策可能随时调整，操作前请以官网最新公布的《漏洞收录规则》《白帽子行为规范》《赏金计划》为准。<br>
+  整理时间：2026-10-01
+</footer>
+
+</div>
+</body>
+</html>
