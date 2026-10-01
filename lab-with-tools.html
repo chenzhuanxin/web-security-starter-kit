@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>靶场实战 —— 用真实工具跑起来</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#F5F6F4;color:#1F2321;font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;font-size:15px;line-height:1.75}
+.wrap{max-width:920px;margin:0 auto;padding:36px 22px 80px}
+h1{font-size:26px;font-weight:600;margin:0 0 8px;letter-spacing:-.01em}
+.sub{color:#6B716C;font-size:14px;margin:0 0 24px}
+h2{font-size:19px;font-weight:600;margin:46px 0 6px;padding-top:20px;border-top:1px solid #E3E5E0}
+h2 .num{color:#185FA5;font-weight:700;margin-right:9px}
+h3{font-size:15.5px;font-weight:600;margin:22px 0 4px}
+p{color:#5A605C;font-size:14.5px;margin:10px 0}
+a{color:#185FA5;text-decoration:none;border-bottom:1px solid #B5D4F4;word-break:break-all}
+a:hover{background:#EAF3FC}
+code{font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:13px;background:#EFEDE6;padding:2px 6px;border-radius:4px;color:#3B403C}
+pre{background:#1F2321;color:#E6E8E4;border-radius:12px;padding:15px 17px;overflow-x:auto;font-family:ui-monospace,Consolas,monospace;font-size:12.8px;line-height:1.75;margin:12px 0;position:relative}
+pre .cmt{color:#8A908C}
+pre .pmt{color:#7CC4F0}
+pre .out{color:#7ED9A8}
+pre .hit{color:#F5C86A;font-weight:600}
+pre .bad{color:#F09A9A}
+.copy{position:absolute;top:9px;right:10px;font-size:11.5px;padding:3px 9px;border-radius:6px;border:1px solid #4A504B;background:#2C312D;color:#B9BFBA;cursor:pointer}
+.copy:hover{background:#3A403B;color:#fff}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #E3E5E0;border-radius:10px;overflow:hidden;font-size:13.5px;margin:14px 0}
+th{background:#F1EFE8;text-align:left;padding:10px 13px;font-size:13px;font-weight:600}
+td{padding:10px 13px;border-top:1px solid #E3E5E0;color:#5A605C;vertical-align:top}
+td b{color:#1F2321}
+.pill{display:inline-block;font-size:11.5px;padding:2px 9px;border-radius:999px;background:#E9EDF5;color:#185FA5;border:1px solid #C3D8EE;margin-right:5px;vertical-align:2px}
+.pill.g{background:#E1F5EE;color:#085041;border-color:#9FE1CB}
+.pill.r{background:#FCEBEB;color:#8C2C2C;border-color:#F0BEBE}
+.pill.a{background:#FDF3E0;color:#8A5A12;border-color:#EBD9AE}
+.note{background:#FDF3E0;border:1px solid #EBD9AE;color:#7A5310;border-radius:12px;padding:13px 17px;font-size:13.5px;margin:16px 0}
+.danger{background:#FCEBEB;border:1px solid #F0BEBE;color:#791F1F;border-radius:12px;padding:13px 17px;font-size:13.5px;margin:16px 0}
+.ok{background:#F1F8F4;border:1px solid #B7E0C9;color:#2A5C42;border-radius:12px;padding:13px 17px;font-size:13.5px;margin:16px 0}
+.card{background:#fff;border:1px solid #E3E5E0;border-radius:14px;padding:18px 20px;margin:14px 0}
+.card h3{margin:0 0 6px}
+ul,ol{color:#5A605C;font-size:14.5px;padding-left:22px}
+li{margin:5px 0}
+li b{color:#1F2321}
+.foot{margin-top:52px;padding-top:20px;border-top:1px solid #E3E5E0;color:#8A908C;font-size:12.5px}
+.url{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #E3E5E0;border-radius:12px;padding:14px 18px;margin:10px 0}
+.url .big{font-family:ui-monospace,monospace;font-size:15px;color:#185FA5;font-weight:600}
+.url .desc{font-size:13px;color:#8A908C}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>靶场实战 —— 用真实工具跑起来</h1>
+<p class="sub">真实靶场 OWASP Juice Shop + 真实工具 ffuf &nbsp;·&nbsp; 全部命令与输出均为本机实测，可原样复现</p>
+
+<div class="danger">
+<b>范围说明。</b>本文所有操作都发生在<b>你自己电脑上的两个本地靶场</b>（只监听本机）。这不是形式主义：下面这些命令的语法、参数、判读逻辑，与你在授权项目里用的完全一样——但<b>把同样的命令指向任何没有授权的真实站点，就是违法行为</b>。请始终在平台 scope 内或自有资产上练习。
+</div>
+
+<h2><span class="num">一</span>现在可以访问的两个靶场</h2>
+
+<div class="url">
+<div>
+<div class="big">http://localhost:3001</div>
+<div class="desc"><b>OWASP Juice Shop v20.2.0</b> —— 真实的开源靶场，一个功能完整的电商网站，内置 100+ 个漏洞挑战。这个才是业界标准靶场。</div>
+</div>
+</div>
+
+<div class="url">
+<div>
+<div class="big">http://localhost:3000</div>
+<div class="desc">之前搭的简化靶场（7 关入门），仍然可用，进度已重置。</div>
+</div>
+</div>
+
+<p>两个靶场同时运行、互不干扰。Juice Shop 是 Node.js 写的，本机 Node 22 正好匹配它要求的版本，所以不需要 Docker、不需要 Java，解压就能跑。</p>
+
+<h2><span class="num">二</span>装好的工具</h2>
+
+<table>
+<tr><th style="width:170px">工具</th><th style="width:120px">状态</th><th>说明</th></tr>
+<tr><td><b>ffuf 2.3.0</b></td><td><span class="pill g">已就绪</span></td><td>目录/文件/参数爆破。免安装单文件 exe，在 <code>tools/ffuf.exe</code></td></tr>
+<tr><td><b>common.txt</b></td><td><span class="pill g">已就绪</span></td><td>SecLists 官方目录字典，4751 条。真实项目里用的就是它</td></tr>
+<tr><td><b>Juice Shop 靶场</b></td><td><span class="pill g">已解压</span></td><td>120.4 MB 官方 Windows 打包版，自带依赖</td></tr>
+<tr><td>httpx</td><td><span class="pill r">未装成</span></td><td>下载时代理隧道报了 502。它负责探活和指纹识别，对单个靶场用处不大，需要时可重下</td></tr>
+</table>
+
+<p>另外这次为了下载靶场，我写了个多线程分块下载器 <code>tools/mtdl.py</code>（单连接只有 40 KB/s，8 线程能到 180~400 KB/s，支持分片断点续传）。以后从 GitHub 拉大文件可以直接用它。</p>
+
+<h2><span class="num">三</span>实操记录一：对简化靶场跑目录爆破</h2>
+
+<p>先说一个必须清掉的坑：<b>ffuf 是 Go 程序，会自动读取系统代理环境变量</b>。你本机设了代理，如果不处理，ffuf 访问本地靶场的请求会被代理拦掉（返回 502），你会以为靶场挂了。</p>
+
+<pre><button class="copy">复制</button><span class="cmt"># 正确姿势：执行前清掉代理变量</span>
+env -u HTTP_PROXY -u HTTPS_PROXY -u http_proxy -u https_proxy NO_PROXY='*' \
+./ffuf.exe -u http://127.0.0.1:3000/FUZZ -w common.txt -mc 200,301,302,403 -t 20 -rate 150 -s</pre>
+
+<pre><button class="copy">复制</button><span class="out">guestbook
+login
+orders
+robots.txt
+search
+shop
+user</span></pre>
+
+<p>扫出 7 个路径。<b>但注意——靶场里那个备份文件没被扫出来。</b>这是真实工作中最常见的状况：通用字典不可能覆盖所有东西。关键在于接下来的动作。</p>
+
+<h3>工具给线索，人做判断</h3>
+
+<p>扫出来的结果里有个 <code>robots.txt</code>。工具到此为止，接下来是人去看：</p>
+
+<pre><button class="copy">复制</button><span class="req">GET</span> http://127.0.0.1:3000/robots.txt
+
+<span class="out">User-agent: *
+Disallow: /backup/
+Disallow: /admin/</span></pre>
+
+<div class="note"><b>robots.txt 是"此地无银三百两"。</b>它本来是写给搜索引擎看的，但内容对所有人公开——等于站方主动列出"这里有我不想让人看见的东西"。<b>Disallow 的路径永远是第一优先级的探测目标。</b></div>
+
+<p>拿到 <code>/backup/</code> 这条线索，做第二次爆破，这次带后缀扩展：</p>
+
+<pre><button class="copy">复制</button>env -u HTTP_PROXY -u HTTPS_PROXY NO_PROXY='*' \
+./ffuf.exe -u http://127.0.0.1:3000/backup/FUZZ -w common.txt \
+  <span class="hit">-e .bak,.zip,.old</span> -mc 200,301,302,403 -t 40 -rate 900 -s
+
+<span class="hit">config.bak</span>          <span class="cmt">← 命中</span></pre>
+
+<p><code>-e</code> 的作用是自动给每个字典词追加后缀，一次请求覆盖 <code>config</code>、<code>config.bak</code>、<code>config.zip</code>、<code>config.old</code> 四种可能。<b>备份文件泄露的拿分效率很高，因为它的价值不取决于技术难度，而取决于文件里有什么。</b></p>
+
+<h2><span class="num">四</span>实操记录二：对 Juice Shop 跑目录爆破（含一个真实的坑）</h2>
+
+<p>Juice Shop 是单页应用（SPA）。直接扫会掉进一个坑，先探测一下：</p>
+
+<pre><button class="copy">复制</button>for p in /this-path-does-not-exist-xyz123 /totally-fake-page /nonexistent; do
+  curl -sS --noproxy '*' -o /dev/null -w "$p → HTTP %{http_code}  %{size_download} bytes\n" "http://127.0.0.1:3001$p"
+done
+
+<span class="bad">/this-path-does-not-exist-xyz123 → HTTP 200  9426 bytes
+/totally-fake-page               → HTTP 200  9426 bytes
+/nonexistent                     → HTTP 200  9426 bytes</span>
+
+<span class="cmt"># 对比首页</span>
+curl -sS --noproxy '*' -o /dev/null -w "首页 → HTTP %{http_code}  %{size_download} bytes\n" http://127.0.0.1:3001/
+
+<span class="bad">首页 → HTTP 200  9426 bytes</span></pre>
+
+<div class="danger"><b>坑在这里：</b>SPA 路由把所有不存在的路径都交给前端处理，统一返回 <code>200</code> + 首页（<b>9426 字节</b>）。<br>
+如果你直接跑 <code>ffuf -mc 200</code>，<b>4751 个字典词会全部"命中"</b>——扫描结果完全没用，你还以为自己扫到了全站。<br>
+<b>解法：用 <code>-fs 9426</code> 把这个"兜底页"的大小过滤掉。</b>这是真实项目里扫 SPA 站点的必备动作，很多新手就是在这里被卡住，然后得出"这个站没东西"的错误结论。</div>
+
+<pre><button class="copy">复制</button><span class="cmt"># 正确姿势：按响应大小过滤掉 SPA 兜底页</span>
+env -u HTTP_PROXY -u HTTPS_PROXY NO_PROXY='*' \
+./ffuf.exe -u http://127.0.0.1:3001/FUZZ -w common.txt \
+  <span class="hit">-mc all -fs 9426</span> -t 40 -rate 800 -s</pre>
+
+<p>过滤之后，结果就干净了。本次实际扫出：</p>
+
+<table>
+<tr><th style="width:110px">状态码</th><th>发现的路径</th></tr>
+<tr><td><b>200</b></td><td><code>/ftp</code>、<code>/promotion</code>、<code>/robots.txt</code>、<code>/video</code>、<code>/.well-known/security.txt</code></td></tr>
+<tr><td><b>301</b></td><td><code>/assets</code>、<code>/media</code></td></tr>
+<tr><td><b>500</b></td><td><code>/api</code>、<code>/api/experiments</code>、<code>/rest</code>、<code>/profile</code>、<code>/redirect</code> —— <b>500 是好信号，说明接口存在但你没给对参数</b></td></tr>
+</table>
+
+<div class="note"><b>关于 500：</b>新人常把 500 当成"站点坏了"直接略过。<b>恰恰相反</b>——500 意味着"这个接口真实存在，只是我调的方式不对"。它是接口挖掘里最有价值的信号之一。同理，<b>403 也不是"没有"</b>，而是"有，但被规则挡住了"，值得尝试绕过。</div>
+
+<h2><span class="num">五</span>实操记录三：深挖 /ftp（403 的判读与字典的局限）</h2>
+
+<p>上一轮扫出的 <code>/ftp</code> 是 Juice Shop 的一个经典入口。先看它对不存在文件的响应：</p>
+
+<pre><button class="copy">复制</button>curl -sS --noproxy '*' -o /dev/null -w "%{http_code} %{size_download}\n" http://127.0.0.1:3001/ftp/nonexistent-xyz
+
+<span class="bad">403 2537</span>       <span class="cmt">← 任何不在白名单里的文件都返回 403</span></pre>
+
+<p>所以做文件爆破时，<b>不能过滤 403，只能保留 200</b>：</p>
+
+<pre><button class="copy">复制</button>env -u HTTP_PROXY -u HTTPS_PROXY NO_PROXY='*' \
+./ffuf.exe -u http://127.0.0.1:3001/ftp/FUZZ -w common.txt \
+  -e .md,.bak,.yml,.json <span class="hit">-mc 200</span> -t 40 -rate 900 -s
+
+<span class="out">Legal.md
+legal.md</span></pre>
+
+<p>字典加后缀一共 2 万多次请求，<b>只发现了 legal.md</b>。但这不代表没有别的——手工验证几个常见文件名：</p>
+
+<pre><button class="copy">复制</button>for f in legal.md acquisitions.md announcement_encrypted.md package.json.bak coupons_2013.md.bak; do
+  printf "%-32s %s\n" "$f" "$(curl -sS --noproxy '*' -o /dev/null -w 'HTTP %{http_code}  %{size_download} bytes' "http://127.0.0.1:3001/ftp/$f")"
+done
+
+<span class="out">legal.md                         HTTP 200  3100 bytes
+acquisitions.md                  HTTP 200  928 bytes          ← 字典没覆盖到
+announcement_encrypted.md        HTTP 200  370431 bytes       ← 字典没覆盖到，370KB</span>
+<span class="bad">package.json.bak                 HTTP 403  2536 bytes         ← 被 deny 规则拦住
+coupons_2013.md.bak              HTTP 403  2536 bytes         ← 被 deny 规则拦住</span></pre>
+
+<div class="ok"><b>这一轮演示了三件事：</b><br>
+① <b>字典决定你的视野。</b><code>common.txt</code> 里没有 <code>acquisitions</code>，所以 ffuf 扫不到它——不是站点没这个东西，而是你的字典不够。真实项目里要按目标特征定制字典。<br>
+② <b>403 值得继续追。</b><code>package.json.bak</code> 和 <code>coupons_2013.md.bak</code> 都返回 403，说明<b>它们确实躺在那个目录里，只是被规则挡住了</b>。Juice Shop 恰好把"绕过这个 deny 规则"做成了一个挑战——值得你自己去试（提示：URL 编码相关）。<br>
+③ <b>大文件是信号。</b>370 KB 的 <code>announcement_encrypted.md</code> 明显不是一份普通公告，里面藏着东西。</div>
+
+<h2><span class="num">六</span>从这次实操里提炼的四条</h2>
+
+<table>
+<tr><th style="width:150px">要点</th><th>为什么</th></tr>
+<tr><td><b>先探测基线，再扫描</b></td><td>不先搞清楚"正常的和不存在的长什么样"，就没法设置过滤条件。SPA 兜底页那个坑就是这么掉进去的</td></tr>
+<tr><td><b>状态码要分类读</b></td><td>200 = 存在；301/302 = 跳转，跟过去看；<b>403 = 有但被拦</b>；<b>500 = 接口在，参数不对</b>。只有 404 才是真的没有</td></tr>
+<tr><td><b>工具只给线索</b></td><td>本次两个关键收获——<code>/backup/config.bak</code>、<code>/ftp/acquisitions.md</code>——都是<b>人看过工具输出之后手工验证</b>出来的，不是工具直接给的</td></tr>
+<tr><td><b>字典是能力边界</b></td><td>换更贴合的字典，或按目标特征自己写词表，往往比调工具参数有用得多</td></tr>
+</table>
+
+<h2><span class="num">七</span>怎么自己重跑</h2>
+
+<h3>启动靶场</h3>
+<p>双击项目根目录的 <b>启动靶场.bat</b>（我新加的），会同时起两个靶场并提示地址。Juice Shop 启动约需 20 秒（要初始化数据库），日志在 <code>tools/js.log</code>。</p>
+
+<h3>ffuf 常用命令</h3>
+<pre><button class="copy">复制</button><span class="cmt"># 1. 目录爆破（通用）</span>
+env -u HTTP_PROXY -u HTTPS_PROXY NO_PROXY='*' ./ffuf.exe \
+  -u http://目标/FUZZ -w common.txt -mc 200,301,302,403 -t 20 -rate 150 -s
+
+<span class="cmt"># 2. 带后缀扩展（找备份文件）</span>
+... -u http://目标/FUZZ -w common.txt -e .bak,.zip,.old,.sql,.tar.gz
+
+<span class="cmt"># 3. SPA 站点：按响应大小过滤兜底页</span>
+... -mc all -fs &lt;兜底页大小&gt;
+
+<span class="cmt"># 4. 参数爆破（找隐藏参数）</span>
+... -u "http://目标/api?FUZZ=1" -w 参数名字典
+
+<span class="cmt"># 5. 只看结果、导出 CSV 留档</span>
+... -s -of csv -o result.csv</pre>
+
+<table>
+<tr><th style="width:110px">参数</th><th>作用</th></tr>
+<tr><td><code>-mc</code></td><td>match codes，只显示这些状态码。用 <code>all</code> 表示全都看</td></tr>
+<tr><td><code>-fs</code>/<code>-fc</code></td><td>过滤指定响应大小 / 状态码。<b>扫 SPA 必备</b></td></tr>
+<tr><td><code>-e</code></td><td>自动追加后缀，如 <code>.bak,.zip</code></td></tr>
+<tr><td><code>-t</code> / <code>-rate</code></td><td>并发数与每秒请求上限。<b>打真实项目必须限速</b>，本地靶场随意</td></tr>
+<tr><td><code>-s</code></td><td>静默模式，只输出命中结果，不被进度刷屏</td></tr>
+<tr><td><code>-of csv -o x.csv</code></td><td>导出结果留档，方便回看和写报告</td></tr>
+</table>
+
+<h2><span class="num">八</span>下一步：把 Juice Shop 接进 Burp</h2>
+
+<p>ffuf 这类工具只能帮你"找门"，<b>真正的漏洞还得靠手工</b>。Juice Shop 有 100+ 个挑战，是练手工最好的靶场之一。装上 Burp 后：</p>
+
+<ol>
+<li>打开 Burp 内置浏览器（Proxy → Intercept → Open browser），<b>不用配证书</b></li>
+<li>访问 <code>http://localhost:3001</code>，把注册、登录、搜索、加购物车、下单、提交评论、上传头像全走一遍</li>
+<li>Target → Scope 填 <code>localhost</code>，把无关流量滤掉</li>
+<li>在 HTTP history 里挑带参数的请求，<b>Ctrl+R 丢进 Repeater</b>，然后按"改值 / 改身份 / 改顺序 / 改类型"四个方向挨个试</li>
+</ol>
+
+<p>Juice Shop 自带计分板和提示系统，右上角 <b>Score Board</b> 能看到自己解开了哪些挑战。从"搜索框做 SQL 注入"和"用别人的购物车 ID"这两个开始最合适。</p>
+
+<div class="note"><b>提醒：</b>Juice Shop 官方还提供了一个在线 Demo 站。那个是<b>公开实例，不要拿它练手</b>——官方只允许浏览，不允许扫描或攻击。用你本地这个，怎么打都没事。</div>
+
+<div class="foot">
+靶场实战记录 &nbsp;·&nbsp; 环境：Windows / Node 22.22.2 / ffuf 2.3.0 / OWASP Juice Shop 20.2.0<br>
+所有输出均为本机实测 · 两个靶场仅监听 127.0.0.1，外网不可达<br>
+配套文件：<code>启动靶场.bat</code>、<code>tools/ffuf.exe</code>、<code>tools/common.txt</code>、<code>tools/mtdl.py</code>
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.copy').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var pre = btn.parentElement.cloneNode(true);
+    var b = pre.querySelector('.copy');
+    if (b) b.remove();
+    navigator.clipboard.writeText(pre.innerText).then(function () {
+      btn.textContent = '已复制';
+      setTimeout(function () { btn.textContent = '复制'; }, 1400);
+    });
+  });
+});
+</script>
+</body>
+</html>
