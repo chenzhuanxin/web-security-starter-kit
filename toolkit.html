@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>真实项目挖洞 —— 工具与操作手册</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#F5F6F4;color:#1F2321;font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;font-size:15px;line-height:1.75}
+.wrap{max-width:920px;margin:0 auto;padding:36px 22px 80px}
+h1{font-size:26px;font-weight:600;margin:0 0 8px;letter-spacing:-.01em}
+.sub{color:#6B716C;font-size:14px;margin:0 0 22px}
+h2{font-size:19px;font-weight:600;margin:46px 0 6px;padding-top:20px;border-top:1px solid #E3E5E0}
+h2 .num{color:#185FA5;font-weight:700;margin-right:9px}
+h3{font-size:15.5px;font-weight:600;margin:22px 0 4px}
+p{color:#5A605C;font-size:14.5px;margin:10px 0}
+a{color:#185FA5;text-decoration:none;border-bottom:1px solid #B5D4F4;word-break:break-all}
+a:hover{background:#EAF3FC}
+code{font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:13px;background:#EFEDE6;padding:2px 6px;border-radius:4px;color:#3B403C}
+pre{background:#1F2321;color:#E6E8E4;border-radius:12px;padding:15px 17px;overflow-x:auto;font-family:ui-monospace,Consolas,monospace;font-size:12.8px;line-height:1.75;margin:12px 0;position:relative}
+pre .cmt{color:#8A908C}
+pre .pmt{color:#7CC4F0}
+pre .out{color:#7ED9A8}
+pre .warn{color:#F5C86A}
+.copy{position:absolute;top:9px;right:10px;font-size:11.5px;padding:3px 9px;border-radius:6px;border:1px solid #4A504B;background:#2C312D;color:#B9BFBA;cursor:pointer}
+.copy:hover{background:#3A403B;color:#fff}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #E3E5E0;border-radius:10px;overflow:hidden;font-size:13.5px;margin:14px 0}
+th{background:#F1EFE8;text-align:left;padding:10px 13px;font-size:13px;font-weight:600}
+td{padding:10px 13px;border-top:1px solid #E3E5E0;color:#5A605C;vertical-align:top}
+td b{color:#1F2321}
+.card{background:#fff;border:1px solid #E3E5E0;border-radius:14px;padding:18px 20px;margin:14px 0}
+.card h3{margin:0 0 4px;font-size:15.5px;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.card .cn{font-family:ui-monospace,monospace;color:#185FA5;font-weight:700;font-size:13px}
+.pill{display:inline-block;font-size:11.5px;padding:2px 9px;border-radius:999px;background:#E9EDF5;color:#185FA5;border:1px solid #C3D8EE;margin-right:5px;vertical-align:2px}
+.pill.g{background:#E1F5EE;color:#085041;border-color:#9FE1CB}
+.pill.r{background:#FCEBEB;color:#8C2C2C;border-color:#F0BEBE}
+.pill.a{background:#FDF3E0;color:#8A5A12;border-color:#EBD9AE}
+.pill.gray{background:#F1EFE8;color:#7D837E;border-color:#D3D1C7}
+.note{background:#FDF3E0;border:1px solid #EBD9AE;color:#7A5310;border-radius:12px;padding:13px 17px;font-size:13.5px;margin:16px 0}
+.danger{background:#FCEBEB;border:1px solid #F0BEBE;color:#791F1F;border-radius:12px;padding:13px 17px;font-size:13.5px;margin:16px 0}
+.ok{background:#F1F8F4;border:1px solid #B7E0C9;color:#2A5C42;border-radius:12px;padding:13px 17px;font-size:13.5px;margin:16px 0}
+ul,ol{color:#5A605C;font-size:14.5px;padding-left:22px}
+li{margin:5px 0}
+li b{color:#1F2321}
+.toc{background:#fff;border:1px solid #E3E5E0;border-radius:14px;padding:16px 20px;margin:20px 0}
+.toc a{display:inline-block;margin:3px 16px 3px 0;font-size:14px}
+.fill{background:#FFFDF7;border:1px dashed #D9C89A}
+.fill td{color:#8A8578;font-size:13px}
+.mono{font-family:ui-monospace,Consolas,monospace;font-size:12.8px}
+.foot{margin-top:52px;padding-top:20px;border-top:1px solid #E3E5E0;color:#8A908C;font-size:12.5px}
+.step{display:flex;gap:14px;margin:18px 0;align-items:flex-start}
+.step .n{flex:0 0 28px;height:28px;border-radius:50%;background:#185FA5;color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.step .b{flex:1}
+.step .b h3{margin:2px 0 4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>真实项目挖洞：工具与操作手册</h1>
+<p class="sub">按你本机实测环境定制 &nbsp;·&nbsp; 所有工具地址已逐一验证 &nbsp;·&nbsp; 适用范围：平台或站点方<b>明确授权</b>的目标</p>
+
+<div class="danger">
+<b>先说清楚这份手册的适用边界。</b>下面所有工具和手法，只有在你具备下列身份之一时才可以使用：<br>
+① 目标是<b>官方 SRC / 众测平台上的项目</b>，且在其公布的 scope 内；② 目标是<b>你自己拥有</b>的资产；③ 你有站点方的<b>书面授权</b>。<br>
+这三者之外的任何目标——公司官网、学校系统、论坛、随便一个 IP——<b>发出去的第一个数据包就已经构成非法侵入计算机信息系统</b>。工具本身不违法，用错地方就是犯罪。这一条在整份手册里优先级最高。
+</div>
+
+<div class="toc">
+<b style="font-size:14px">目录</b><br>
+<a href="#s1">一、先确认授权</a>
+<a href="#s2">二、你这台机器的实测诊断</a>
+<a href="#s3">三、工具地图</a>
+<a href="#s4">四、完整操作流水线</a>
+<a href="#s5">五、Burp 手把手</a>
+<a href="#s6">六、测试纪律</a>
+<a href="#s7">七、第一个月排期</a>
+</div>
+
+<h2 id="s1"><span class="num">一</span>先确认授权：授权范围里有什么</h2>
+
+<p>新人拿到一个项目，第一件事不是装工具，是<strong>把 scope 抄成一张表</strong>。这不是形式主义——测试中被平台扣分甚至永久封号，绝大多数是因为"越界"而不是"技术差"。</p>
+
+<table>
+<tr><th style="width:130px">要素</th><th>要确认什么</th><th>越界后果</th></tr>
+<tr><td><b>资产范围</b></td><td>具体是哪些域名、IP、APP、小程序？<b>通配符 <code>*.a.com</code> 是否包含子域的子域？</b>收购来的老域名算不算？</td><td>测试范围外资产 = 犯罪</td></tr>
+<tr><td><b>端口 / 协议</b></td><td>是否允许扫全端口？是否允许测非 Web 服务？</td><td>被判定扫描滥用，扣分</td></tr>
+<tr><td><b>测试类型</b></td><td>是否允许自动化扫描器？是否允许口令爆破？是否允许上传 webshell？</td><td>违反规则，报告被判无效</td></tr>
+<tr><td><b>时间窗口</b></td><td>项目起止时间，是否有"仅夜间测试"的要求</td><td>窗口外提交不予受理</td></tr>
+<tr><td><b>禁止事项</b></td><td>是否禁止社工、禁止 DoS、禁止触碰真实用户数据、禁止横向渗透到内网</td><td>最严重，可能直接法律追责</td></tr>
+</table>
+
+<h3>把 scope 抄成这张表，测的时候放在旁边</h3>
+<table class="fill">
+<tr><th style="width:150px">项目</th><th>填写</th></tr>
+<tr><td>平台 / 项目名</td><td>—</td></tr>
+<tr><td>授权域名 / IP</td><td>—</td></tr>
+<tr><td>明确排除的资产</td><td>—</td></tr>
+<tr><td>是否允许自动化扫描</td><td>—</td></tr>
+<tr><td>是否允许口令爆破</td><td>—</td></tr>
+<tr><td>并发 / 速率限制</td><td>—</td></tr>
+<tr><td>测试时间窗口</td><td>—</td></tr>
+<tr><td>报告提交入口</td><td>—</td></tr>
+</table>
+
+<div class="note"><b>一条实战经验：</b>不确定某个资产在不在范围内时，<b>先提交工单问平台</b>，而不是"试一下再说"。问了不丢分，试错了丢号。</div>
+
+<h2 id="s2"><span class="num">二</span>你这台机器的实测诊断</h2>
+
+<p>我把你本机扫了一遍，结论是好消息：<strong>你只差一个 Burp Suite，其余全部可以免安装直接用。</strong></p>
+
+<table>
+<tr><th style="width:150px">环境</th><th style="width:90px">状态</th><th>说明</th></tr>
+<tr><td>Google Chrome</td><td><span class="pill g">已有</span></td><td>主浏览器，配 Burp 用</td></tr>
+<tr><td>Microsoft Edge</td><td><span class="pill g">已有</span></td><td>备用，可以专门挂代理，不影响日常上网的浏览器</td></tr>
+<tr><td>Charles</td><td><span class="pill a">已有</span></td><td>抓包工具，能看流量，但没有 Repeater/Intruder 那种"改一个字符重放"的能力。<b>可以当临时拐杖，做 Web 测试还是建议上 Burp</b></td></tr>
+<tr><td>Python 3.14</td><td><span class="pill g">已有</span></td><td>已装 <code>requests</code> / <code>bs4</code> / <code>lxml</code>，写小脚本做接口提取、批量校验完全够</td></tr>
+<tr><td>Node.js 22</td><td><span class="pill g">已有</span></td><td>跑前端 JS 分析类工具、以及你自己那个靶场</td></tr>
+<tr><td>Java</td><td><span class="pill gray">未装</span></td><td><b>不影响。</b>Burp 官方 Windows 安装包自带运行环境</td></tr>
+<tr><td>Go</td><td><span class="pill gray">未装</span></td><td><b>不影响。</b>subfinder / httpx / nuclei / ffuf 都是<b>编译好的单文件 exe，下载即用，不需要装 Go</b></td></tr>
+<tr><td>Docker</td><td><span class="pill gray">未装</span></td><td>只影响本地靶场，不影响真实目标测试</td></tr>
+<tr><td>nmap</td><td><span class="pill gray">未装</span></td><td>需要时下 Windows 安装包；也可以先用在线端口检测替代</td></tr>
+</table>
+
+<div class="ok"><b>你现在的"最小可用套装"（3 件，30 分钟内能跑起来）：</b><br>
+① <b>Burp Suite Community</b>（免费）——抓包 + 改包 + 重放，覆盖 80% 的手工测试；<br>
+② <b>Chrome 浏览器</b>（已有）——配 Burp 的内置浏览器用，连证书都不用装；<br>
+③ <b>Chrome 开发者工具 F12</b>（已有）——看前端逻辑、扒接口、看 JS。<br>
+<b>先用这三件打一个月，别急着囤工具。</b></div>
+
+<h2 id="s3"><span class="num">三</span>工具地图：按阶段选，别按名气选</h2>
+
+<p>工具圈最大的坑是"工具囤积症"——装 40 个工具，一个都吃不透。下面按<strong>一个项目从开始到交报告的顺序</strong>排列，每个都标了本机可用性和平台接受度。</p>
+
+<h3>① 抓包改包 —— 这是主战场，占你 70% 的时间</h3>
+<div class="card">
+<h3><span class="cn">Burp Suite Community</span><span class="pill g">本机可直接装</span><span class="pill g">必装</span></h3>
+<p>Web 安全测试的事实标准。核心就三个功能：<b>Proxy</b>（截获流量）、<b>Repeater</b>（改一个参数重放，最重要）、<b>HTTP history</b>（回看刚才发了什么）。社区版免费，Repeater 完整可用，只限制 Intruder 的速度和项目保存——对新手完全够。</p>
+<p class="mono">portswigger.net/burp/communitydownload</p>
+</div>
+<div class="card">
+<h3><span class="cn">OWASP ZAP</span><span class="pill a">备选</span></h3>
+<p>同样免费开源的抓包代理，功能对应 Burp，界面稍笨重。Burp 装不上时的替代品。<br>
+<span class="mono">zaproxy.org/download/</span></p>
+</div>
+<div class="card">
+<h3><span class="cn">浏览器插件</span><span class="pill gray">可选</span></h3>
+<p><b>FoxyProxy</b>——一键在"直连 / 走 Burp"之间切换代理，省得每次改系统设置（本机访问其官网不通，可从浏览器扩展商店搜装，装不上也无所谓）。<br>
+<b>Wappalyzer</b>——识别网站用了什么框架、中间件、CDN，做指纹用。<br>
+<span class="mono">wappalyzer.com</span></p>
+</div>
+
+<h3>② 信息收集 —— 决定你能看到多少资产</h3>
+<div class="card">
+<h3><span class="cn">subfinder</span><span class="pill g">免安装 exe</span><span class="pill g">高频使用</span></h3>
+<p>子域名枚举。目标主站防护严，但它的某个测试子域、老旧子域往往无人看管，是出洞最多的地方。14.5k 星，项目仍在活跃维护。<br>
+<span class="mono">github.com/projectdiscovery/subfinder</span></p>
+</div>
+<div class="card">
+<h3><span class="cn">httpx</span><span class="pill g">免安装 exe</span><span class="pill g">高频使用</span></h3>
+<p>把枚举出来的几万个子域快速探活，并抓取状态码、标题、技术栈。作用是<b>把海量域名收敛成几十个真正值得看的站点</b>。<br>
+<span class="mono">github.com/projectdiscovery/httpx</span></p>
+</div>
+<div class="card">
+<h3><span class="cn">空间测绘平台</span><span class="pill a">浏览器直接用</span></h3>
+<p>FOFA、Hunter、Quake、Shodan——按"网站图标特征 / 证书 / 页面关键词"反查同一单位的其他资产。能发现主域名之外、你根本想不到的暴露面。<br>
+<span class="mono">fofa.info&nbsp;·&nbsp;quake.360.net&nbsp;·&nbsp;www.shodan.io</span><br>
+<span class="pill gray">注</span>hunter.how 对脚本返回 403（浏览器正常）；zoomeye.org 当前源站 521 打不开，跳过即可。</p>
+</div>
+<div class="card">
+<h3><span class="cn">OneForAll</span><span class="pill a">需 Python 环境</span></h3>
+<p>国产子域枚举整合工具，把几十个数据源和爆破方式打包在一起，比 subfinder 更"暴力"。10k 星。<b>但对目标请求量大，用之前先确认项目允许</b>。<br>
+<span class="mono">github.com/shmilylty/OneForAll</span></p>
+</div>
+
+<h3>③ 目录与接口发现 —— 找"藏起来的入口"</h3>
+<div class="card">
+<h3><span class="cn">dirsearch</span><span class="pill g">Python，本机可跑</span><span class="pill g">高频使用</span></h3>
+<p>目录/文件爆破，自带后缀字典（<code>.bak</code>、<code>.zip</code>、<code>.old</code> 等）。14.8k 星，今天还在更新。找备份文件、后台入口、未授权接口全靠它。<br>
+<span class="mono">github.com/maurosoria/dirsearch</span></p>
+</div>
+<div class="card">
+<h3><span class="cn">ffuf</span><span class="pill g">免安装 exe</span></h3>
+<p>更快的爆破器，可对目录、参数、子域、POST 字段做 fuzz。<b>自带速率限制参数</b>，适合在"允许扫描但限速"的项目里精细控制。<br>
+<span class="mono">github.com/ffuf/ffuf</span></p>
+</div>
+<div class="card">
+<h3><span class="cn">katana / gau</span><span class="pill g">免安装 exe</span></h3>
+<p><b>katana</b>：爬虫，能把一个站点爬出上万条 URL，还能解析 JS 里的接口。<b>gau</b>：从 Wayback Machine 等历史归档里捞出老 URL——<b>很多早已下线的接口其实还活着，而且没有防护。</b><br>
+<span class="mono">github.com/projectdiscovery/katana&nbsp;·&nbsp;github.com/lc/gau</span></p>
+</div>
+<div class="card">
+<h3><span class="cn">LinkFinder / JSFinder</span><span class="pill a">需 Python 环境</span></h3>
+<p>专扒 JS 文件里藏着的前端接口路径和密钥。现代站点权限校验常放在前端，看一眼 JS 就能找到一堆后端接口。<br>
+<span class="mono">github.com/GerbenJavado/LinkFinder&nbsp;·&nbsp;github.com/Threezh1/JSFinder</span></p>
+</div>
+
+<h3>④ 漏洞验证 —— 注意：这一类工具在平台上争议最大</h3>
+<div class="danger"><b>务必先读平台规则。</b>下面这些自动化扫描器，<b>多数 SRC 和众测平台明确禁止使用，或者明确声明"扫描器发现的问题不计分"</b>。而且大量扫描极易触发目标的风控、影响业务、被判定为攻击行为。<br>
+<b>正确用法：</b>把它们当"线索发现器"，发现有价值的结果后，<b>用手工在 Burp 里复现一遍</b>，用复现结果去提交。绝不要直接把扫描器输出贴进报告。</div>
+<div class="card">
+<h3><span class="cn">nuclei</span><span class="pill g">免安装 exe</span><span class="pill r">平台接受度低</span></h3>
+<p>基于模板的漏洞扫描，用于快速排查目标是否命中已知 CVE。<b>只在项目明确允许扫描时用，且必须限速</b>。<br>
+<span class="mono">github.com/projectdiscovery/nuclei</span></p>
+</div>
+<div class="card">
+<h3><span class="cn">sqlmap</span><span class="pill r">高危，慎用</span></h3>
+<p>SQL 注入自动化。功能强大但流量特征极明显，<b>在真实目标上使用前必须先确认平台允许，且严格限制等级和注入技术</b>。多数情况下，手工加一个单引号探测 + Burp 重放就足以证明漏洞存在，不必动它。<br>
+<span class="mono">sqlmap.org</span></p>
+</div>
+<div class="card">
+<h3><span class="cn">nmap</span><span class="pill gray">需安装</span></h3>
+<p>端口与服务识别。用于摸清目标开放了哪些服务。<code>-T3</code> 或更低，别用激进模式。<br>
+<span class="mono">nmap.org/download.html</span></p>
+</div>
+
+<h3>⑤ 记录与报告 —— 决定你能拿到多少钱</h3>
+<div class="card">
+<h3><span class="cn">Burp 自带 + 截图工具</span></h3>
+<p>每个漏洞固定留四样东西：<b>完整 URL</b>、<b>原始请求包</b>、<b>关键响应</b>、<b>复现步骤截图</b>。这四样不齐，报告大概率被驳回。<br>
+XSS 类漏洞<b>必须有浏览器截图</b>——证明"脚本真的执行了"，而不是仅仅被回显。</p>
+</div>
+
+<h2 id="s4"><span class="num">四</span>完整操作流水线：一个项目从 0 到交报告</h2>
+
+<p>下面 8 个阶段是一个真实项目的标准动作顺序。<strong>注意时间分配：真正的"攻击"只占很小一部分，前面全是在看。</strong></p>
+
+<div class="step"><div class="n">0</div><div class="b">
+<h3>读 scope，建资产白名单</h3>
+<p>把第一章那张表填满。<b>把授权域名写成一个文件</b>，后面所有命令都从这个文件读——这样你能一眼看到自己有没有越界，也能在报告里说明"我测的资产在范围内"。</p>
+<pre><button class="copy">复制</button><span class="cmt"># scope.txt —— 只有这里面的资产可以碰</span>
+example.com
+admin.example.com
+*.api.example.com</pre>
+</div></div>
+
+<div class="step"><div class="n">1</div><div class="b">
+<h3>子域名枚举：把资产面铺开</h3>
+<pre><button class="copy">复制</button><span class="pmt">$</span> subfinder -d example.com -all -recursive -o subs.txt
+
+<span class="cmt"># 合并你从空间测绘平台、证书透明度日志里手动找到的结果</span>
+<span class="pmt">$</span> cat fofa_results.txt &gt;&gt; subs.txt
+<span class="pmt">$</span> sort -u subs.txt -o subs.txt &amp;&amp; wc -l subs.txt</pre>
+<p><b>为什么这步最值钱：</b>主站防护严密、天天被人盯着，但一个 <code>test-2021.example.com</code> 可能三年没人维护。<b>攻击面永远在边上，不在正门。</b></p>
+<p class="mono"><span class="pill a">提醒</span>这一步只查公开的 DNS 记录和第三方数据源，不向目标发包，是合规成本最低的一步。</p>
+</div></div>
+
+<div class="step"><div class="n">2</div><div class="b">
+<h3>存活探测 + 指纹识别：把几万个收敛成几十个</h3>
+<pre><button class="copy">复制</button><span class="pmt">$</span> httpx -l subs.txt -status-code -title -tech-detect -o alive.txt
+
+<span class="out">https://admin.example.com  [200] [管理后台] [Vue, Nginx]
+https://test.example.com   [200] [phpMyAdmin] [PHP, MySQL]    &lt;-- 这个值得重点看
+https://old.example.com    [403] [Forbidden]                  &lt;-- 403 也可能是被拦截的真入口</span></pre>
+<p>输出里的每一列都是情报：<b>状态码</b>告诉你活着没有，<b>标题</b>直接暴露这是一个管理后台还是报错页，<b>技术栈</b>决定你该去找哪类漏洞（PHP 找文件上传，Java 找反序列化）。</p>
+</div></div>
+
+<div class="step"><div class="n">3</div><div class="b">
+<h3>端口与服务扫描（若项目允许）</h3>
+<pre><button class="copy">复制</button><span class="pmt">$</span> nmap -sV -Pn -T3 --top-ports 1000 -iL ips.txt -oN ports.txt</pre>
+<p><code>-T3</code> 是刻意选的保守速度。<b>别用 <code>-T4/-T5</code> 或 <code>-A</code></b>，那会明显加重目标负载，容易被风控抓到。发现非 Web 端口（数据库、Redis、ES）先别急着连——很多项目禁止触碰。</p>
+</div></div>
+
+<div class="step"><div class="n">4</div><div class="b">
+<h3>目录与文件爆破：找没关好的门</h3>
+<pre><button class="copy">复制</button><span class="pmt">$</span> dirsearch -u https://test.example.com \
+  -e php,asp,aspx,jsp,html,js,zip,bak,old,txt,sql,git \
+  -t 10 --random-agent
+
+<span class="cmt"># 或 ffuf，能显式限速（推荐在限速项目里用）</span>
+<span class="pmt">$</span> ffuf -u https://test.example.com/FUZZ -w common.txt \
+  -mc 200,301,302,403 -rate 20 -o dir.json</pre>
+<p><b>只看 200 会漏掉一半东西</b>。403 常意味着"文件在，但你没权限"——换个路径大小写、加个斜杠、换个请求方法就可能有戏。目录爆破的经典收获：<code>.git/</code>、<code>.env</code>、<code>backup.zip</code>、<code>phpinfo.php</code>、<code>debug.log</code>。</p>
+</div></div>
+
+<div class="step"><div class="n">5</div><div class="b">
+<h3>URL 与接口采集：把功能点全捞出来</h3>
+<pre><button class="copy">复制</button><span class="pmt">$</span> katana -u https://test.example.com -d 3 -jc -o crawl.txt
+<span class="pmt">$</span> gau example.com &gt; urls.txt
+
+<span class="cmt"># 从采集结果里挑出"带参数"的 URL —— 这些才是可测试点</span>
+<span class="pmt">$</span> cat crawl.txt urls.txt | grep "?" | sort -u &gt; params.txt
+<span class="pmt">$</span> wc -l params.txt</pre>
+<p><code>-jc</code> 是解析 JS 里的链接，这一步经常能扒出前端调用、但页面上没有的后端接口。<b>带参数的 URL 就是你的"测试清单"</b>，每一个参数都要过一遍后面的"四个方向"。</p>
+</div></div>
+
+<div class="step"><div class="n">6</div><div class="b">
+<h3>手工测试 —— 真正的时间黑洞，也是唯一出成果的地方</h3>
+<p>打开 Burp，用它内置的浏览器（<b>连证书都不用装</b>），然后<strong>像正常用户一样把目标站点的功能全部走一遍</strong>：注册、登录、改资料、下单、上传、搜索、分享、导出、支付……</p>
+<p>每走到一个功能点，就在 Repeater 里问那四句话：</p>
+<table>
+<tr><th style="width:80px">方向</th><th>在 Burp 里具体改什么</th><th>典型命中</th></tr>
+<tr><td><b>改值</b></td><td>数字改 0 / -1 / 超大数；字符串加 <code>'</code> <code>"</code> <code>&lt;&gt;</code>；留空；超长</td><td>SQL 注入、逻辑漏洞、XSS</td></tr>
+<tr><td><b>改身份</b></td><td><code>id</code> / <code>uid</code> / <code>userId</code> / <code>orderId</code> / <code>role</code> 换成别人的、改成 0 或 1</td><td><b>越权（新手出成果最多的方向）</b></td></tr>
+<tr><td><b>改顺序</b></td><td>跳步调用接口、重复提交、并发提交、把"需验证"的步骤直接跳过</td><td>业务逻辑、支付绕过</td></tr>
+<tr><td><b>改类型</b></td><td>数字→字符串、<code>false</code>→<code>true</code>、删掉某个字段、多传一个字段</td><td>校验绕过</td></tr>
+</table>
+<p><b>还有一个必做动作：</b>在浏览器里登录普通账号，然后对比接口响应里<b>"页面没显示但返回了"的字段</b>——手机号、邮箱、内部 ID、角色标识经常就藏在里面。这是信息泄露和越权的最高频入口。</p>
+</div></div>
+
+<div class="step"><div class="n">7</div><div class="b">
+<h3>验证到"最小可复现"就停手</h3>
+<p>这是区分专业和业余的地方。<strong>证明漏洞存在所需的信息就够了，多取一条都是风险。</strong></p>
+<ul>
+<li>SQL 注入：能取到<b>库名或表名</b>即止，<b>绝不 dump 用户数据</b>；</li>
+<li>越权：能看到<b>别人的一条</b>无关紧要的记录即止，不要批量遍历；</li>
+<li>文件上传：上传一个<b>内容为空的验证文件</b>即止，不要传 webshell、不要执行命令；</li>
+<li>信息泄露：<b>只看响应头或字段名</b>，不要下载完整数据包；</li>
+<li>任何涉及批量的操作，<b>提前向平台报备</b>。</li>
+</ul>
+<p>然后清理现场：删除你上传的文件、退出你创建的测试账号。<b>好的测试者走的和来的时候一样干净。</b></p>
+</div></div>
+
+<div class="step"><div class="n">8</div><div class="b">
+<h3>写报告提交</h3>
+<p>按固定结构写：<b>漏洞名称 / 类型 / 危害等级 / 完整 URL（含参数）/ 复现步骤 / 危害说明 / 修复建议 / 附件截图</b>。</p>
+<p>三个必须做的事：</p>
+<ul>
+<li>提交前先在平台<b>漏洞库搜关键词查重</b>——撞车会被判重复，白白扣分；</li>
+<li>截图里<b>必须能看到完整 URL</b>，标注清楚每一步；</li>
+<li>修复建议要具体到"用什么方法"（如"使用参数化查询"），不要写"加强安全防护"。</li>
+</ul>
+</div></div>
+
+<h2 id="s5"><span class="num">五</span>Burp 手把手：装完之后手往哪放</h2>
+
+<div class="step"><div class="n">1</div><div class="b">
+<h3>下载安装</h3>
+<p>打开 <a href="https://portswigger.net/burp/communitydownload" target="_blank">portswigger.net/burp/communitydownload</a>，选 <b>Windows</b> 安装包。官方包自带运行环境，<b>你机器上没有 Java 也能装</b>。</p>
+</div></div>
+
+<div class="step"><div class="n">2</div><div class="b">
+<h3>启动配置</h3>
+<p>启动后选 <b>Temporary project</b> → <b>Use Burp defaults</b>。社区版不支持保存项目，关掉重开就是新的，对你够用。</p>
+</div></div>
+
+<div class="step"><div class="n">3</div><div class="b">
+<h3>用内置浏览器（强烈推荐，省掉最容易卡住的一步）</h3>
+<p>切到 <b>Proxy → Intercept</b> 标签，点 <b>Open browser</b>。Burp 会打开自带配置好的 Chromium——<b>代理和证书都配好了，你什么都不用管。</b></p>
+<div class="note"><b>如果坚持用自己的 Chrome：</b>需要两步——① 用插件或系统设置把代理指向 <code>127.0.0.1:8080</code>；② 浏览器访问 <code>http://burp</code> 下载 CA 证书并导入到"受信任的根证书颁发机构"，否则所有 HTTPS 站点都会报证书错误。<b>这步新手最容易失败，所以更建议直接用内置浏览器。</b></div>
+</div></div>
+
+<div class="step"><div class="n">4</div><div class="b">
+<h3>设置 Target Scope —— 这一步是给自己上保险</h3>
+<p><b>Target → Scope → Add</b>，把授权域名填进去，勾选 <b>Use suite scope</b>。<br>
+作用有两个：一是<b>过滤掉无关流量</b>（你浏览器里的其他标签页、浏览器自己的更新请求）不会污染历史记录；二是<b>让你一眼看清自己在打谁</b>——所有记录下来的请求都在 scope 内。</p>
+</div></div>
+
+<div class="step"><div class="n">5</div><div class="b">
+<h3>正常浏览，让流量自然产生</h3>
+<p><b>Proxy → HTTP history</b>。别急着改包，先把网站当正常产品用一遍。看到感兴趣的请求（带参数的、返回 JSON 的、有 token 的），右键 → <b>Send to Repeater</b>（快捷键 <span class="mono">Ctrl+R</span>）。</p>
+</div></div>
+
+<div class="step"><div class="n">6</div><div class="b">
+<h3>在 Repeater 里做"四个方向"</h3>
+<p>左边是原始请求，改完点 <b>Send</b>，右边就是响应。改一个参数、看一次结果、判断一次——<b>这就是全部的核心循环。</b></p>
+<pre><button class="copy">复制</button><span class="cmt"># 原始请求</span>
+GET /api/order?id=1001 HTTP/1.1
+Host: target.example.com
+Cookie: session=abc123
+
+<span class="cmt"># 第 1 次改动：换 id（测越权）——  改完点 Send，看响应里是不是别人的数据</span>
+GET /api/order?id=<span class="warn">1002</span> HTTP/1.1
+
+<span class="cmt"># 第 2 次改动：加个引号（测注入）——  看响应有没有报错</span>
+GET /api/order?id=1001<span class="warn">'</span> HTTP/1.1
+
+<span class="cmt"># 第 3 次改动：换成不存在的 id（测异常处理）——  看会不会炸出堆栈信息</span>
+GET /api/order?id=<span class="warn">99999999</span> HTTP/1.1</pre>
+<p><b>判断要点：</b>不要只盯状态码。<b>响应长度变了、返回了页面没显示的字段、报错信息泄露了路径</b>——这三种"预期之外的反应"才是真正的信号。</p>
+</div></div>
+
+<div class="step"><div class="n">7</div><div class="b">
+<h3>用 HTTP history 回头补漏</h3>
+<p>测完一轮，回 <b>HTTP history</b> 按状态码或关键词过滤，重新审视那些你刚才没在意的请求。<b>很多洞是第二轮才看出来的</b>，因为第一轮你还不知道自己在找什么。</p>
+</div></div>
+
+<h2 id="s6"><span class="num">六</span>测试纪律：比工具重要得多的一段</h2>
+
+<table>
+<tr><th style="width:150px">纪律</th><th>具体做法</th></tr>
+<tr><td><b>限速</b></td><td>并发控制在 5 以内，<code>ffuf -rate 20</code>、<code>dirsearch -t 10</code>。<b>绝不允许因为你的测试导致目标变慢或不可用</b>——这是最常见的封号原因</td></tr>
+<tr><td><b>只验证不深入</b></td><td>证明存在就停。不进数据库翻数据、不横向移动、不尝试提权到服务器</td></tr>
+<tr><td><b>不碰真实用户数据</b></td><td>看到别人的手机号、身份证号，<b>只看一条、不保存、不截图敏感内容</b>，报告里打码</td></tr>
+<tr><td><b>不越界</b></td><td>扫描前对照 scope 表。发现范围外的资产，<b>停下来先问平台</b></td></tr>
+<tr><td><b>不用社工</b></td><td>不钓鱼、不骗客服、不撞库其他平台泄露的密码。<b>这是红线中的红线</b></td></tr>
+<tr><td><b>不做 DoS</b></td><td>不压测、不发大量畸形包、不触发无限循环</td></tr>
+<tr><td><b>不公开未修复漏洞</b></td><td>修复前不写公众号、不发群、不上短视频。<b>更不能用漏洞向企业要钱</b>——那是敲诈勒索，不是赏金</td></tr>
+<tr><td><b>留痕</b></td><td>保留你的请求日志和截图。<b>万一被质疑，这是你证明"我在授权范围内测试"的唯一凭据</b></td></tr>
+</table>
+
+<h2 id="s7"><span class="num">七</span>第一个月：别贪多，按这个顺序</h2>
+
+<table>
+<tr><th style="width:110px">时间</th><th>做什么</th><th>目标</th></tr>
+<tr><td><b>第 1 周</b></td><td>装 Burp，在你自己的靶场（<code>localhost:3000</code>）上把 7 关用 Burp 重做一遍，<b>不许用 curl</b>，全部走 Repeater</td><td>把 Burp 的操作练成肌肉记忆</td></tr>
+<tr><td><b>第 2 周</b></td><td>PortSwigger Academy 从最基础的注入、认证、访问控制三个模块开始，每天 2–3 关</td><td>建立"漏洞类型 → 测试手法"的对应关系</td></tr>
+<tr><td><b>第 3 周</b></td><td>注册补天 / 漏洞盒子，<b>先读规则页和已公开的漏洞报告</b>，不急着提交。看别人怎么写的</td><td>搞清平台的 scope 表达方式和报告标准</td></tr>
+<tr><td><b>第 4 周</b></td><td>挑一个防护较弱、竞争少的授权项目，<b>只做三件事</b>：看 robots.txt 和目录、翻 JS 找接口、测越权</td><td>跑通第一次"挖到 → 通过 → 拿到分"的完整闭环</td></tr>
+</table>
+
+<div class="ok"><b>如果这本手册你只记三件事：</b><br>
+① <b>先看授权，再动手。</b>scope 之外的一切，技术再好也是犯罪；<br>
+② <b>先看，再打。</b>信息收集占七成时间，找准入口后验证只要几分钟。别一上来就丢扫描器；<br>
+③ <b>只验证到最小可复现。</b>这一条同时保护目标、保护你自己、保护你的账号。</div>
+
+<div class="foot">
+真实项目工具与操作手册 &nbsp;·&nbsp; 环境诊断基于本机实测（Windows / Chrome / Charles / Python 3.14 / Node 22）<br>
+所有工具地址已逐一验证可访问 &nbsp;·&nbsp; 失效项已在文中标注<br>
+配套阅读：《靶场清单与使用方法》《靶场实操全记录》
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.copy').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var pre = btn.parentElement.cloneNode(true);
+    var b = pre.querySelector('.copy');
+    if (b) b.remove();
+    navigator.clipboard.writeText(pre.innerText).then(function () {
+      btn.textContent = '已复制';
+      setTimeout(function () { btn.textContent = '复制'; }, 1400);
+    });
+  });
+});
+</script>
+</body>
+</html>
