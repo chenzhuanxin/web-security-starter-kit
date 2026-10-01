@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网络安全入门套件 — 平台清单 · 靶场 · 方法论 · 实操记录</title>
+<style>
+  :root{
+    --bg:#f5f7fa;
+    --card:#ffffff;
+    --ink:#1a1d21;
+    --ink-2:#4a5259;
+    --ink-3:#7b858f;
+    --line:#e3e8ee;
+    --accent:#1f6feb;
+    --accent-soft:#eaf2ff;
+    --warn:#b4531a;
+    --warn-bg:#fff6ed;
+    --warn-line:#f0c9a4;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px 72px}
+
+  header{padding:56px 0 36px;border-bottom:1px solid var(--line)}
+  .kicker{
+    display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);background:var(--accent-soft);
+    padding:4px 10px;border-radius:5px;font-weight:600;margin-bottom:18px;
+  }
+  h1{font-size:33px;line-height:1.3;letter-spacing:-.4px;font-weight:700}
+  .sub{margin-top:14px;color:var(--ink-2);font-size:15.5px;max-width:660px}
+  .meta{margin-top:20px;font-size:13px;color:var(--ink-3);display:flex;gap:20px;flex-wrap:wrap}
+
+  .notice{
+    margin:32px 0 8px;padding:18px 20px;border-radius:10px;
+    background:var(--warn-bg);border:1px solid var(--warn-line);
+  }
+  .notice strong{color:var(--warn);display:block;margin-bottom:6px;font-size:14px}
+  .notice p{font-size:13.5px;color:#6b4a2c;line-height:1.65}
+
+  h2{
+    font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);
+    font-weight:700;margin:48px 0 16px;
+  }
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:680px){.grid{grid-template-columns:1fr}}
+
+  a.card{
+    display:block;background:var(--card);border:1px solid var(--line);border-radius:11px;
+    padding:20px 20px 18px;text-decoration:none;color:inherit;
+    transition:border-color .16s,box-shadow .16s,transform .16s;
+  }
+  a.card:hover{
+    border-color:#b9cfe8;box-shadow:0 4px 16px rgba(31,111,235,.09);transform:translateY(-1px);
+  }
+  .card .num{
+    font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.1em;
+  }
+  .card h3{font-size:16.5px;font-weight:650;margin:7px 0 8px;letter-spacing:-.2px}
+  .card p{font-size:13.5px;color:var(--ink-2);line-height:1.62}
+  .card .tag{
+    display:inline-block;margin-top:12px;font-size:11.5px;color:var(--ink-3);
+    border:1px solid var(--line);border-radius:4px;padding:1px 7px;
+  }
+
+  .repo{
+    margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:11px;
+    padding:18px 20px;
+  }
+  .repo h3{font-size:15px;font-weight:650;margin-bottom:12px}
+  code{
+    font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+    font-size:12.7px;background:#eef1f5;padding:2px 6px;border-radius:4px;color:#2a3138;
+  }
+  pre{
+    background:#1c2128;color:#d8dee6;border-radius:8px;padding:14px 16px;overflow-x:auto;
+    font-family:"SFMono-Regular",Consolas,monospace;font-size:12.6px;line-height:1.62;margin-top:12px;
+  }
+  pre code{background:none;padding:0;color:inherit;font-size:inherit}
+  .repo ul{list-style:none;margin-top:6px}
+  .repo li{font-size:13.5px;color:var(--ink-2);padding:5px 0 5px 16px;position:relative}
+  .repo li::before{content:"→";position:absolute;left:0;color:var(--ink-3)}
+
+  footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-3)}
+  footer p+p{margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span class="kicker">Web Security Starter Kit</span>
+    <h1>网络安全入门套件</h1>
+    <p class="sub">
+      从「看懂这个行业怎么赚钱」到「在自己电脑上真打一遍」的完整路径：平台清单、靶场资源、
+      挖洞方法论、真实工具链实操记录，全部基于实机实测。
+    </p>
+    <div class="meta">
+      <span>整理时间：2026-10-01</span>
+      <span>5 份文档 + 1 个可运行靶场</span>
+      <span>所有链接与命令均实测</span>
+    </div>
+  </header>
+
+  <div class="notice">
+    <strong>⚠️ 动手前必读</strong>
+    <p>
+      本套件所有技术内容仅适用于「平台或站点方明确授权」的环境。未获授权扫描或测试任何真实系统，
+      属于非法侵入计算机信息系统，须负刑事责任。用漏洞向企业索取财物不是赏金，是敲诈勒索。
+      靶场之所以可以随便打，只因为它就是造出来给人打的。
+    </p>
+  </div>
+
+  <h2>文档</h2>
+  <div class="grid">
+
+    <a class="card" href="platforms.html">
+      <div class="num">01</div>
+      <h3>漏洞赏金 / 众测平台清单</h3>
+      <p>国内第三方众测、官方与教育类平台、大厂 SRC、国际平台四类，含官网、注册入口与每个平台要求的具体实名材料。失效地址已标注。</p>
+      <span class="tag">18 个平台 · 官网直达</span>
+    </a>
+
+    <a class="card" href="labs-list.txt">
+      <div class="num">02</div>
+      <h3>练习靶场总清单 + 使用方法论</h3>
+      <p>38 个靶场网址逐一实测可访问性，覆盖本地自建、国际在线、国内在线三类，附按漏洞类型的速查表和第一次练手的排期。</p>
+      <span class="tag">38 个网址 · 实测状态</span>
+    </a>
+
+    <a class="card" href="lab-walkthrough.html">
+      <div class="num">03</div>
+      <h3>靶场实操全记录</h3>
+      <p>七关入门靶场的完整通关过程留档：每一步真实请求、服务端原样返回的响应、背后的原理与修复建议，附一份可直接套用的漏洞报告模板。</p>
+      <span class="tag">7 关 · 真实请求留档</span>
+    </a>
+
+    <a class="card" href="lab-with-tools.html">
+      <div class="num">04</div>
+      <h3>靶场实战 —— 用真实工具跑起来</h3>
+      <p>用 ffuf + SecLists 字典对真实靶场 OWASP Juice Shop 做目录爆破的完整记录。含工具给线索、人做判断的闭环，以及 SPA 站点与 403 响应的判读陷阱。</p>
+      <span class="tag">ffuf · Juice Shop</span>
+    </a>
+
+    <a class="card" href="toolkit.html" style="grid-column:1/-1">
+      <div class="num">05</div>
+      <h3>真实项目挖洞：工具与操作手册</h3>
+      <p>
+        按实机环境定制的工具链与操作流水线：六类工具地图（抓包、子域枚举、存活指纹、目录爆破、接口采集、自动化扫描）、
+        Burp Suite 从安装到改包的手把手步骤、8 阶段作业流程、限速与留痕纪律、以及第一个月的练习排期。
+      </p>
+      <span class="tag">环境诊断 · 8 阶段流水线 · Burp 上手</span>
+    </a>
+
+  </div>
+
+  <h2>配套靶场源码</h2>
+  <div class="repo">
+    <h3>vulnlab —— 7 关入门靶场（Node 原生，零依赖）</h3>
+    <p style="font-size:13.5px;color:var(--ink-2)">
+      上面第 03 份文档对应的靶场本体，一个文件即可运行，故意内置了弱口令、SQL 注入、越权、
+      金额篡改、反射/存储型 XSS、敏感文件泄露七类缺陷，带实时进度追踪。
+    </p>
+    <ul style="margin-top:10px">
+      <li>文件：<code>vulnlab/server.js</code>（约 16 KB，无任何第三方依赖）</li>
+      <li>要求：Node.js 18+</li>
+    </ul>
+    <pre><code># 进入目录后直接运行
+node server.js
+
+# 浏览器打开
+http://localhost:3000</code></pre>
+    <p style="font-size:13px;color:var(--ink-3);margin-top:12px">
+      服务只监听 127.0.0.1，外网访问不到。进度玩乱了可访问 <code>/reset</code> 重置。
+    </p>
+  </div>
+
+  <footer>
+    <p>本仓库整理的是公开的平台入口、靶场资源与通用安全测试方法论，不包含任何针对特定真实目标的漏洞信息，也不构成任何测试授权。</p>
+    <p>所有练习请限定于靶场或平台明确授权的范围。授权之外，第一个数据包就已经越线。</p>
+  </footer>
+
+</div>
+</body>
+</html>
