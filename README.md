@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/logo.png" width="120" alt="web-security-starter-kit"></p>
+
 <div align="center">
 
 # 网络安全入门套件
